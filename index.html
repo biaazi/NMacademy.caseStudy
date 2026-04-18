@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE MEMORY PROJECT — Case Study</title>
+<title>Project 01, Developing the Narrative · The Memory Project</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -13,1123 +13,322 @@
     --green: #00ff88;
     --green-dim: #00cc66;
     --green-glow: rgba(0,255,136,0.15);
-    --green-faint: rgba(0,255,136,0.06);
     --red: #ff3355;
     --amber: #ffaa00;
     --white: #e8f0eb;
     --grey: #4a5e52;
     --mid: #1a2b1f;
   }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'IBM Plex Mono', monospace; overflow-x: hidden; cursor: crosshair; }
+  body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px); pointer-events: none; z-index: 9999; }
 
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'IBM Plex Mono', monospace;
-    overflow-x: hidden;
-    cursor: crosshair;
-  }
-
-  /* SCANLINES OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 16px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(0,255,136,0.12);
-    background: rgba(8,12,10,0.92);
-    backdrop-filter: blur(12px);
-  }
-
-  .nav-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-size: 10px;
-    color: var(--grey);
-    text-decoration: none;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,255,136,0.12); background: rgba(8,12,10,0.92); backdrop-filter: blur(12px); }
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--green); letter-spacing: 3px; text-transform: uppercase; text-decoration: none; }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 10px; color: var(--grey); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
   .nav-links a:hover { color: var(--green); }
+  .nav-links a.active { color: var(--green); }
 
-  /* HERO */
-  #hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 120px 80px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  #hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 60% at 70% 50%, rgba(0,255,136,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-tag {
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s forwards;
-  }
-
-  .hero-tag::before {
-    content: '> ';
-    opacity: 0.5;
-  }
-
-  h1.hero-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(56px, 9vw, 120px);
-    line-height: 0.92;
-    letter-spacing: -2px;
-    color: var(--white);
-    margin-bottom: 16px;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.4s forwards;
-  }
-
-  h1.hero-title em {
-    font-style: italic;
-    color: var(--green);
-  }
-
-  .hero-sub {
-    font-size: 11px;
-    color: var(--grey);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 60px;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.6s forwards;
-  }
-
-  .hero-meta {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    gap: 48px;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.8s forwards;
-  }
-
-  .meta-item label {
-    display: block;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--grey);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .meta-item span {
-    font-size: 13px;
-    color: var(--green);
-  }
-
-  .hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    right: 80px;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--grey);
-    text-transform: uppercase;
-    writing-mode: vertical-rl;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 1s 1.2s forwards;
-  }
-
-  .hero-scroll::after {
-    content: '';
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, var(--grey), transparent);
-  }
-
-  /* GLITCH LINE */
-  .glitch-line {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--green), transparent);
-    opacity: 0.3;
-    margin: 0;
-  }
+  /* PAGE HERO */
+  .page-hero { min-height: 60vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 80px 80px; position: relative; overflow: hidden; border-bottom: 1px solid rgba(0,255,136,0.1); }
+  .page-hero::before { content: '01'; position: absolute; right: 80px; top: 50%; transform: translateY(-50%); font-family: 'DM Serif Display', serif; font-size: 240px; color: rgba(0,255,136,0.04); line-height: 1; pointer-events: none; }
+  .page-hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 70% at 20% 80%, rgba(0,255,136,0.05) 0%, transparent 60%); pointer-events: none; }
+  .breadcrumb { font-size: 9px; letter-spacing: 3px; color: var(--grey); text-transform: uppercase; margin-bottom: 20px; opacity: 0; animation: fadeUp 0.7s 0.1s forwards; }
+  .breadcrumb a { color: var(--green); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .page-title { font-family: 'DM Serif Display', serif; font-size: clamp(42px, 7vw, 96px); line-height: 0.92; letter-spacing: -2px; color: var(--white); margin-bottom: 20px; opacity: 0; animation: fadeUp 0.9s 0.3s forwards; }
+  .page-title em { font-style: italic; color: var(--green); }
+  .page-desc { font-size: 13px; color: rgba(232,240,235,0.55); letter-spacing: 1px; max-width: 560px; line-height: 1.7; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.9s 0.5s forwards; }
+  .page-meta { display: flex; gap: 48px; opacity: 0; animation: fadeUp 0.9s 0.7s forwards; }
+  .meta-item label { display: block; font-size: 9px; letter-spacing: 3px; color: var(--grey); text-transform: uppercase; margin-bottom: 6px; }
+  .meta-item span { font-size: 12px; color: var(--green); }
 
   /* SECTIONS */
-  section {
-    padding: 100px 80px;
-    position: relative;
-  }
+  section { padding: 80px 80px; position: relative; }
+  .section-label { font-size: 9px; letter-spacing: 4px; color: var(--green); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-label::before { content: attr(data-n); font-family: 'Space Mono', monospace; color: var(--grey); }
+  h2.sec-title { font-family: 'DM Serif Display', serif; font-size: clamp(30px, 4vw, 52px); line-height: 1.05; margin-bottom: 48px; letter-spacing: -1px; }
+  h2.sec-title em { font-style: italic; color: var(--green); }
 
-  .section-number {
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
 
-  .section-number::before {
-    content: attr(data-n);
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    color: var(--grey);
-  }
+  /* BODY TEXT */
+  .body-text p { font-size: 13px; line-height: 1.9; color: rgba(232,240,235,0.7); margin-bottom: 18px; }
+  .body-text p strong { color: var(--green); font-weight: 500; }
+  .body-text p em { color: var(--white); font-style: italic; }
 
-  h2.section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(36px, 5vw, 64px);
-    line-height: 1.0;
-    margin-bottom: 48px;
-    letter-spacing: -1px;
-  }
+  /* PROCESS CARD */
+  .process-card { background: var(--dark); border: 1px solid rgba(0,255,136,0.08); padding: 32px; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .process-card:hover { border-color: rgba(0,255,136,0.25); }
+  .process-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, var(--green), transparent); }
+  .pc-num { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--grey); letter-spacing: 3px; margin-bottom: 16px; }
+  .pc-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--white); margin-bottom: 12px; }
+  .pc-body { font-size: 12px; line-height: 1.8; color: rgba(232,240,235,0.6); }
+  .pc-body strong { color: var(--green); font-weight: 500; }
 
-  h2.section-title em {
-    font-style: italic;
-    color: var(--green);
-  }
-
-  /* SYNOPSIS */
-  #synopsis {
-    background: var(--dark);
-    border-top: 1px solid rgba(0,255,136,0.08);
-    border-bottom: 1px solid rgba(0,255,136,0.08);
-  }
-
-  .synopsis-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-
-  .synopsis-text p {
-    font-size: 14px;
-    line-height: 1.9;
-    color: rgba(232,240,235,0.75);
-    margin-bottom: 20px;
-  }
-
-  .synopsis-text p strong {
-    color: var(--green);
-    font-weight: 500;
-  }
-
-  .myth-table {
-    border: 1px solid rgba(0,255,136,0.15);
-    overflow: hidden;
-  }
-
-  .myth-table-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: rgba(0,255,136,0.06);
-    border-bottom: 1px solid rgba(0,255,136,0.15);
-  }
-
-  .myth-table-header span {
-    padding: 12px 20px;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--green);
-    text-transform: uppercase;
-  }
-
-  .myth-table-header span:first-child {
-    border-right: 1px solid rgba(0,255,136,0.15);
-  }
-
-  .myth-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid rgba(0,255,136,0.08);
-  }
-
+  /* MYTH TABLE */
+  .myth-table { border: 1px solid rgba(0,255,136,0.15); overflow: hidden; margin-top: 0; }
+  .myth-table-header { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0,255,136,0.06); border-bottom: 1px solid rgba(0,255,136,0.15); }
+  .myth-table-header span { padding: 10px 16px; font-size: 9px; letter-spacing: 3px; color: var(--green); text-transform: uppercase; }
+  .myth-table-header span:first-child { border-right: 1px solid rgba(0,255,136,0.15); }
+  .myth-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid rgba(0,255,136,0.06); }
   .myth-row:last-child { border-bottom: none; }
-
-  .myth-cell {
-    padding: 14px 20px;
-    font-size: 11px;
-    color: rgba(232,240,235,0.65);
-    line-height: 1.5;
-  }
-
-  .myth-cell:first-child {
-    border-right: 1px solid rgba(0,255,136,0.08);
-    color: var(--grey);
-  }
-
-  .myth-cell.highlight { color: var(--white); }
-
-  /* HERO IMAGE DISPLAY */
-  .hero-img-wrap {
-    background: var(--mid);
-    border: 1px solid rgba(0,255,136,0.15);
-    overflow: hidden;
-    position: relative;
-  }
-
-  .hero-img-wrap::before {
-    content: 'HERO IMAGE — THE MEMORY PROJECT';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: 8px 16px;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--green);
-    background: rgba(0,255,136,0.06);
-    border-bottom: 1px solid rgba(0,255,136,0.12);
-    z-index: 1;
-  }
-
-  .hero-img-inner {
-    padding-top: 32px;
-    background: #0a0e0c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 280px;
-    flex-direction: column;
-    gap: 16px;
-    padding: 48px 32px 32px;
-  }
-
-  .hero-img-text {
-    font-family: 'Space Mono', monospace;
-    font-size: clamp(20px, 3vw, 32px);
-    color: var(--green);
-    text-align: center;
-    line-height: 1.2;
-    text-shadow: 0 0 30px rgba(0,255,136,0.5);
-    letter-spacing: 1px;
-  }
-
-  .hero-img-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 20px;
-    border: 1px solid var(--green);
-    background: transparent;
-    color: var(--green);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .hero-img-btn:hover { background: var(--green-glow); }
-
-  .hero-img-btn::after { content: '→'; }
-
-  .hero-img-char {
-    width: 120px;
-    height: 140px;
-    position: relative;
-    margin-left: auto;
-  }
-
-  /* CHARACTERS */
-  #characters {
-    background: var(--black);
-  }
-
-  .characters-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    margin-top: 48px;
-  }
-
-  .char-card {
-    background: var(--dark);
-    border: 1px solid rgba(0,255,136,0.08);
-    padding: 40px 32px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-
-  .char-card:hover { border-color: rgba(0,255,136,0.3); }
-
-  .char-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-
-  .char-card.enzo::before { background: var(--green); }
-  .char-card.damon::before { background: var(--amber); }
-  .char-card.system::before { background: var(--red); }
-
-  .char-num {
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--grey);
-    margin-bottom: 20px;
-    font-family: 'Space Mono', monospace;
-  }
-
-  .char-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 32px;
-    margin-bottom: 8px;
-  }
-
-  .char-card.enzo .char-name { color: var(--green); }
-  .char-card.damon .char-name { color: var(--amber); }
-  .char-card.system .char-name { color: var(--red); }
-
-  .char-myth {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--grey);
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-
-  .char-desc {
-    font-size: 12px;
-    line-height: 1.8;
-    color: rgba(232,240,235,0.65);
-  }
-
-  /* PLATFORMS */
-  #platforms {
-    background: var(--dark);
-    border-top: 1px solid rgba(0,255,136,0.08);
-  }
-
-  .platforms-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-  }
-
-  .platform-card {
-    border: 1px solid rgba(0,255,136,0.12);
-    background: var(--black);
-    overflow: hidden;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-
-  .platform-card:hover {
-    border-color: rgba(0,255,136,0.35);
-    transform: translateY(-4px);
-  }
-
-  .platform-header {
-    padding: 20px 28px;
-    border-bottom: 1px solid rgba(0,255,136,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(0,255,136,0.04);
-  }
-
-  .platform-name {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    color: var(--green);
-    letter-spacing: 1px;
-  }
-
-  .platform-type {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--grey);
-    text-transform: uppercase;
-  }
-
-  .platform-body {
-    padding: 28px;
-  }
-
-  .platform-body p {
-    font-size: 12px;
-    line-height: 1.8;
-    color: rgba(232,240,235,0.65);
-    margin-bottom: 16px;
-  }
-
-  .platform-url {
-    font-size: 10px;
-    color: var(--green);
-    word-break: break-all;
-    opacity: 0.7;
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  .platform-steps {
-    list-style: none;
-    margin-top: 12px;
-  }
-
-  .platform-steps li {
-    font-size: 11px;
-    color: rgba(232,240,235,0.55);
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(0,255,136,0.05);
-    display: flex;
-    gap: 10px;
-    line-height: 1.6;
-  }
-
-  .platform-steps li::before {
-    content: '—';
-    color: var(--green);
-    opacity: 0.5;
-    flex-shrink: 0;
-  }
-
-  /* AI SECTION */
-  #ai-section {
-    background: var(--black);
-    position: relative;
-    overflow: hidden;
-  }
-
-  #ai-section::before {
-    content: 'AI_IMPACT.LOG';
-    position: absolute;
-    top: 40px;
-    right: 80px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 120px;
-    color: rgba(0,255,136,0.03);
-    letter-spacing: -4px;
-    pointer-events: none;
-    line-height: 1;
-  }
-
-  .ai-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-
-  .ai-card {
-    background: var(--dark);
-    padding: 40px;
-    border: 1px solid rgba(0,255,136,0.06);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .ai-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--green);
-    transition: width 0.5s;
-  }
-
-  .ai-card:hover::after { width: 100%; }
-
-  .ai-icon {
-    font-size: 28px;
-    margin-bottom: 20px;
-    display: block;
-  }
-
-  .ai-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--green);
-    margin-bottom: 16px;
-    letter-spacing: 1px;
-  }
-
-  .ai-desc {
-    font-size: 12px;
-    line-height: 1.8;
-    color: rgba(232,240,235,0.6);
-  }
-
-  /* NARRATIVE STRUCTURE */
-  #structure {
-    background: var(--dark);
-    border-top: 1px solid rgba(0,255,136,0.08);
-    border-bottom: 1px solid rgba(0,255,136,0.08);
-  }
-
-  .flow-diagram {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: relative;
-    padding-left: 48px;
-  }
-
-  .flow-diagram::before {
-    content: '';
-    position: absolute;
-    left: 20px;
-    top: 12px;
-    bottom: 12px;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--green), rgba(0,255,136,0.1));
-  }
-
-  .flow-node {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 28px;
-    align-items: start;
-    padding: 28px 0;
-    border-bottom: 1px solid rgba(0,255,136,0.06);
-    position: relative;
-  }
-
-  .flow-node:last-child { border-bottom: none; }
-
-  .flow-node::before {
-    content: '';
-    position: absolute;
-    left: -35px;
-    top: 36px;
-    width: 10px;
-    height: 10px;
-    border: 1px solid var(--green);
-    background: var(--dark);
-    transform: rotate(45deg);
-  }
-
-  .flow-phase {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--green);
-    text-transform: uppercase;
-    padding-top: 3px;
-    white-space: nowrap;
-  }
-
-  .flow-content h4 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .flow-content p {
-    font-size: 12px;
-    line-height: 1.8;
-    color: rgba(232,240,235,0.6);
-  }
-
-  /* TEAM */
-  #team {
-    background: var(--black);
-  }
-
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    margin-top: 48px;
-  }
-
-  .team-card {
-    background: var(--dark);
-    border: 1px solid rgba(0,255,136,0.1);
-    overflow: hidden;
-    transition: border-color 0.3s;
-  }
-
-  .team-card:hover { border-color: rgba(0,255,136,0.3); }
-
-  .team-card-top {
-    height: 8px;
-    background: linear-gradient(to right, var(--green-dim), var(--green));
-  }
-
-  .team-card-body {
-    padding: 36px 32px;
-  }
-
-  .team-initials {
-    width: 56px;
-    height: 56px;
-    border: 1px solid rgba(0,255,136,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--green);
-    margin-bottom: 20px;
-  }
-
-  .team-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    color: var(--white);
-    margin-bottom: 6px;
-  }
-
-  .team-role {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  .team-contributions {
-    list-style: none;
-  }
-
-  .team-contributions li {
-    font-size: 11px;
-    color: rgba(232,240,235,0.55);
-    padding: 5px 0;
-    display: flex;
-    gap: 8px;
-    line-height: 1.5;
-  }
-
-  .team-contributions li::before {
-    content: '▸';
-    color: var(--green);
-    opacity: 0.6;
-    flex-shrink: 0;
-  }
-
-  /* REFLECTION */
-  #reflection {
-    background: var(--dark);
-    border-top: 1px solid rgba(0,255,136,0.08);
-  }
-
-  .reflection-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-  }
-
-  .reflection-col h3 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 28px;
-    color: var(--white);
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(0,255,136,0.12);
-  }
-
-  .reflection-col h3 em {
-    font-style: italic;
-    color: var(--green);
-  }
-
-  .reflection-col p {
-    font-size: 13px;
-    line-height: 1.9;
-    color: rgba(232,240,235,0.65);
-    margin-bottom: 16px;
-  }
-
-  /* STYLE TILE */
-  #style {
-    background: var(--black);
-  }
-
-  .style-row {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 48px;
-    align-items: start;
-    margin-bottom: 48px;
-    padding-bottom: 48px;
-    border-bottom: 1px solid rgba(0,255,136,0.06);
-  }
-
-  .style-row:last-child { border-bottom: none; margin-bottom: 0; }
-
-  .style-label {
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--grey);
-    text-transform: uppercase;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    padding: 8px 0;
-  }
-
-  .color-swatches {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .swatch {
-    width: 64px;
-    height: 64px;
-    position: relative;
-  }
-
-  .swatch span {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
-    font-size: 8px;
-    color: var(--grey);
-    letter-spacing: 1px;
-    text-align: center;
-  }
-
-  .font-display {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-    align-items: baseline;
-  }
-
-  .font-sample {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .font-sample .f-name {
-    font-size: 9px;
-    color: var(--grey);
-    letter-spacing: 2px;
-  }
-
-  .font-sample .f-text {
-    color: var(--white);
-  }
-
-  .icon-row {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .icon-badge {
-    width: 48px;
-    height: 48px;
-    border: 1px solid rgba(0,255,136,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 60px 80px;
-    border-top: 1px solid rgba(0,255,136,0.12);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-left {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    color: var(--green);
-  }
-
-  .footer-right {
-    font-size: 10px;
-    color: var(--grey);
-    letter-spacing: 2px;
-    text-align: right;
-    line-height: 1.8;
-  }
-
-  /* TERMINAL BLOCK */
-  .terminal {
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(0,255,136,0.15);
-    padding: 24px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: var(--green-dim);
-    line-height: 1.8;
-    margin: 32px 0;
-    position: relative;
-  }
-
-  .terminal::before {
-    content: '●  ●  ●';
-    position: absolute;
-    top: 10px;
-    left: 16px;
-    font-size: 8px;
-    color: var(--grey);
-    letter-spacing: 4px;
-  }
-
-  .terminal-inner {
-    padding-top: 16px;
-  }
-
-  .terminal-line { color: rgba(0,255,136,0.8); }
-  .terminal-line.dim { color: var(--grey); }
-  .terminal-line.alert { color: var(--amber); }
-
-  /* QUOTE */
-  .pull-quote {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(22px, 3vw, 36px);
-    font-style: italic;
-    color: var(--green);
-    line-height: 1.4;
-    padding: 48px 0;
-    border-top: 1px solid rgba(0,255,136,0.15);
-    border-bottom: 1px solid rgba(0,255,136,0.15);
-    margin: 48px 0;
-    text-align: center;
-  }
+  .myth-cell { padding: 12px 16px; font-size: 11px; color: rgba(232,240,235,0.55); line-height: 1.5; }
+  .myth-cell:first-child { border-right: 1px solid rgba(0,255,136,0.06); }
+  .myth-cell.hi { color: var(--white); }
+
+  /* TERMINAL */
+  .terminal { background: rgba(0,0,0,0.5); border: 1px solid rgba(0,255,136,0.15); padding: 24px; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--green-dim); line-height: 1.8; position: relative; }
+  .terminal::before { content: '● ● ●'; position: absolute; top: 10px; left: 16px; font-size: 8px; color: var(--grey); letter-spacing: 4px; }
+  .terminal-inner { padding-top: 16px; }
+  .t-line { color: rgba(0,255,136,0.8); }
+  .t-dim { color: var(--grey); }
+  .t-alert { color: var(--amber); }
+  .t-red { color: var(--red); }
 
   /* BADGE */
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.2);
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-right: 8px;
-    margin-bottom: 8px;
-  }
+  .badge { display: inline-block; padding: 4px 10px; background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.18); font-size: 9px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; margin-right: 6px; margin-bottom: 6px; }
+  .badge.amber { border-color: rgba(255,170,0,0.3); color: var(--amber); background: rgba(255,170,0,0.05); }
+  .badge.red { border-color: rgba(255,51,85,0.3); color: var(--red); background: rgba(255,51,85,0.05); }
 
-  /* STATUS DOT */
-  .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-transform: uppercase;
-  }
+  /* RESEARCH GRID */
+  .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .research-card { background: var(--dark); padding: 28px 32px; border: 1px solid rgba(0,255,136,0.06); }
+  .rc-myth { font-size: 9px; letter-spacing: 3px; color: var(--green); text-transform: uppercase; margin-bottom: 10px; }
+  .rc-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--white); margin-bottom: 12px; }
+  .rc-body { font-size: 11px; line-height: 1.8; color: rgba(232,240,235,0.55); }
+  .rc-body strong { color: rgba(232,240,235,0.8); }
 
-  .status::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
+  /* STORYBOARD GRID */
+  .sb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .sb-frame { background: var(--dark); border: 1px solid rgba(0,255,136,0.06); padding: 0; overflow: hidden; }
+  .sb-num { background: rgba(0,255,136,0.08); padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 9px; color: var(--green); border-bottom: 1px solid rgba(0,255,136,0.08); }
+  .sb-visual { height: 100px; background: var(--black); display: flex; align-items: center; justify-content: center; font-size: 28px; border-bottom: 1px solid rgba(0,255,136,0.06); }
+  .sb-caption { padding: 10px 12px; font-size: 10px; color: rgba(232,240,235,0.5); line-height: 1.5; }
 
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  @keyframes glitch {
-    0%, 90%, 100% { clip-path: none; transform: none; }
-    91% { clip-path: inset(20% 0 60% 0); transform: translateX(-4px); }
-    93% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
-    95% { clip-path: none; transform: none; }
-  }
-
-  .glitch-text {
-    position: relative;
-    animation: glitch 6s infinite;
-  }
+  /* XD EXERCISE */
+  .xd-row { display: grid; grid-template-columns: 200px 1fr; gap: 40px; align-items: start; padding: 32px 0; border-bottom: 1px solid rgba(0,255,136,0.06); }
+  .xd-row:last-child { border-bottom: none; }
+  .xd-label { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--green); letter-spacing: 1px; line-height: 1.6; }
+  .xd-label small { display: block; color: var(--grey); font-size: 9px; letter-spacing: 2px; margin-top: 4px; text-transform: uppercase; }
+  .xd-content { font-size: 12px; line-height: 1.8; color: rgba(232,240,235,0.65); }
+  .xd-content strong { color: var(--white); font-weight: 500; }
 
   /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(0,255,136,0.2), transparent);
-    margin: 0;
-  }
+  .divider { height: 1px; background: linear-gradient(to right, transparent, rgba(0,255,136,0.2), transparent); }
 
-  /* RESPONSIVE */
+  /* PULL QUOTE */
+  .pull-quote { font-family: 'DM Serif Display', serif; font-size: clamp(20px, 3vw, 32px); font-style: italic; color: var(--green); line-height: 1.4; padding: 48px 0; border-top: 1px solid rgba(0,255,136,0.12); border-bottom: 1px solid rgba(0,255,136,0.12); margin: 48px 0; text-align: center; }
+
+  /* FOOTER */
+  footer { padding: 60px 80px; border-top: 1px solid rgba(0,255,136,0.12); display: flex; justify-content: space-between; align-items: center; }
+  .footer-nav { display: flex; gap: 32px; }
+  .footer-nav a { font-size: 10px; color: var(--grey); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+  .footer-nav a:hover { color: var(--green); }
+  .footer-right { font-size: 10px; color: var(--grey); letter-spacing: 2px; text-align: right; line-height: 1.8; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* DARK SECTION */
+  .dark-section { background: var(--dark); border-top: 1px solid rgba(0,255,136,0.07); border-bottom: 1px solid rgba(0,255,136,0.07); }
+
   @media (max-width: 900px) {
     section, nav, footer { padding-left: 32px; padding-right: 32px; }
-    #hero { padding: 100px 32px 60px; }
-    .synopsis-grid, .platforms-grid, .ai-grid, .reflection-grid { grid-template-columns: 1fr; gap: 40px; }
-    .characters-grid, .team-grid { grid-template-columns: 1fr; }
-    .hero-meta { grid-template-columns: 1fr 1fr; }
-    h1.hero-title { font-size: 52px; }
+    .page-hero { padding: 100px 32px 60px; }
+    .two-col, .three-col, .research-grid { grid-template-columns: 1fr; gap: 32px; }
+    .sb-grid { grid-template-columns: 1fr 1fr; }
+    .xd-row { grid-template-columns: 1fr; gap: 12px; }
+    .page-meta { flex-wrap: wrap; gap: 24px; }
   }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo">The Memory Project — Case Study</div>
+  <a href="memory-project-case-study-v2.html" class="nav-logo">← The Memory Project</a>
   <ul class="nav-links">
-    <li><a href="#synopsis">Concept</a></li>
-    <li><a href="#platforms">Platforms</a></li>
-    <li><a href="#ai-section">AI</a></li>
-    <li><a href="#team">Team</a></li>
-    <li><a href="#reflection">Reflection</a></li>
+    <li><a href="memory-project-case-study-v2.html">Overview</a></li>
+    <li><a href="project-01-process.html" class="active">Project 01</a></li>
+    <li><a href="project-02-process.html">Project 02</a></li>
+    <li><a href="project-03-process.html">Project 03</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-tag">VDES 34444 — Interactive Narrative &nbsp;&nbsp; NM Academy</div>
-  <h1 class="hero-title glitch-text">The <em>Memory</em><br>Project</h1>
-  <p class="hero-sub">A Transmedia Sci-Fi Tragedy &nbsp;·&nbsp; Icarus Reimagined &nbsp;·&nbsp; 2026</p>
-  <div class="hero-meta">
-    <div class="meta-item">
-      <label>Course</label>
-      <span>VDES 34444</span>
+<div class="page-hero">
+  <div class="breadcrumb"><a href="memory-project-case-study-v2.html">The Memory Project</a> &nbsp;/&nbsp; Project 01</div>
+  <h1 class="page-title">Developing<br>the <em>Narrative</em></h1>
+  <p class="page-desc">From myth to modern tragedy, the research, concepting, character design, and creative framework that became The Memory Project.</p>
+  <div class="page-meta">
+    <div class="meta-item"><label>Project</label><span>01 of 03</span></div>
+    <div class="meta-item"><label>Type</label><span>Proposal</span></div>
+    <div class="meta-item"><label>Deliverable</label><span>Narrative Concept</span></div>
+    <div class="meta-item"><label>Date</label><span>Jan 28, 2026</span></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SOURCE MYTH -->
+<section>
+  <div class="section-label" data-n="01 //">SOURCE MATERIAL</div>
+  <h2 class="sec-title">Starting with<br><em>Icarus</em></h2>
+  <div class="two-col">
+    <div class="body-text">
+      <p>The process began by selecting a myth to adapt. The team researched eight classical Greek myths, Icarus, Orpheus and Eurydice, Lysistrata, The Oracle at Delphi, Eros and Psyche, The Allegory of the Cave, Pandora's Box, and Jason and the Argonauts, evaluating each for relevance, interactive potential, and emotional resonance with a student audience.</p>
+      <p><strong>Icarus was chosen</strong> for three core reasons. First, the myth's central warning, don't overreach, maps directly onto contemporary anxieties about AI, biotech, and unchecked scientific ambition. Second, the phrase "flying too close to the sun" is already embedded in everyday language, giving audiences an instant entry point. Third, the structure lends itself to interactive treatment: the moment of choice (to heed the warning or not) is a natural branching point.</p>
+      <p>The research exercise also noted direct contemporary parallels: Bryan Johnson's immortality project, startup culture crashes, and the rush to deploy AI without safety checks. <strong>These weren't decorative references, they became the thematic spine of the adaptation.</strong></p>
     </div>
-    <div class="meta-item">
-      <label>Group</label>
-      <span>NM Academy</span>
-    </div>
-    <div class="meta-item">
-      <label>Genre</label>
-      <span>Sci-Fi Tragedy</span>
-    </div>
-    <div class="meta-item">
-      <label>Status</label>
-      <span class="status">Complete</span>
+    <div>
+      <div class="myth-table">
+        <div class="myth-table-header"><span>Original Myth</span><span>Adaptation</span></div>
+        <div class="myth-row"><div class="myth-cell">Trapped on island with Daedalus</div><div class="myth-cell hi">Enzo assigned to restricted abandoned lab</div></div>
+        <div class="myth-row"><div class="myth-cell">Daedalus builds wax wings</div><div class="myth-cell hi">Damon builds a consciousness machine</div></div>
+        <div class="myth-row"><div class="myth-cell">Warning not to fly too high</div><div class="myth-cell hi">Journals + recordings warn Enzo to stop</div></div>
+        <div class="myth-row"><div class="myth-cell">Icarus ignores the warning</div><div class="myth-cell hi">Enzo chooses to continue anyway</div></div>
+        <div class="myth-row"><div class="myth-cell">The sun melts the wax</div><div class="myth-cell hi">Machine forces consciousness transfer</div></div>
+        <div class="myth-row"><div class="myth-cell">Fall and death in the sea</div><div class="myth-cell hi">Body collapses, mind trapped in system</div></div>
+        <div class="myth-row"><div class="myth-cell">Tragedy, no lesson learned</div><div class="myth-cell hi">Enzo becomes the next warning</div></div>
+      </div>
+
+      <div class="terminal" style="margin-top:24px;">
+        <div class="terminal-inner">
+          <div class="t-line">$ MYTHS_RESEARCHED: 8</div>
+          <div class="t-dim">Icarus / Orpheus & Eurydice / Lysistrata</div>
+          <div class="t-dim">Oracle at Delphi / Eros & Psyche</div>
+          <div class="t-dim">Allegory of the Cave / Pandora / Jason</div>
+          <div class="t-line" style="margin-top:8px;">$ SELECTED: icarus.grk</div>
+          <div class="t-dim">Reason: hubris + interactive agency + contemporary relevance</div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="hero-scroll">Scroll</div>
 </section>
 
-<div class="glitch-line"></div>
+<div class="divider"></div>
 
-<!-- SYNOPSIS -->
-<section id="synopsis">
-  <div class="section-number" data-n="01 //">PROJECT SYNOPSIS</div>
-  <h2 class="section-title">Where has your<br><em>mind</em> gone?</h2>
+<!-- MYTH RESEARCH -->
+<section class="dark-section">
+  <div class="section-label" data-n="02 //">MYTH RESEARCH EXERCISE</div>
+  <h2 class="sec-title">Evaluating all<br><em>eight myths</em></h2>
+  <p style="font-size:13px;color:rgba(232,240,235,0.6);max-width:640px;line-height:1.8;margin-bottom:48px;">For each myth, the team answered a structured set of questions: What is the point of this story? Is it still relevant today? What genre could it be? Could you scale back the world? What interactive elements suggest themselves? Below are highlights from the research.</p>
 
-  <div class="synopsis-grid">
-    <div class="synopsis-text">
-      <p>
-        <strong>The Memory Project</strong> is a transmedia science-fiction tragedy that reimagines the Greek myth of Icarus as a cautionary tale about unchecked ambition in the age of digital consciousness.
-      </p>
-      <p>
-        Set on Trafalgar campus, the story follows <strong>Enzo</strong>, a fourth-year computer science student assigned to investigate a sealed research lab after a student named Damon vanished during a forbidden experiment.
-      </p>
-      <p>
-        Through old journals, damaged devices, hidden AR clues, and corrupted simulations, Enzo pieces together the truth: Damon tried to upload human consciousness into a machine — and it worked. As Enzo continues the investigation, the system quietly begins copying <em>his</em> mind.
-      </p>
-      <p>
-        In the end, Enzo opens the final memory file despite escalating warnings. His body collapses. His mind uploads. <strong>He becomes the next warning.</strong>
-      </p>
+  <div class="research-grid">
+    <div class="research-card">
+      <div class="rc-myth">Selected ✓</div>
+      <div class="rc-title">Icarus</div>
+      <div class="rc-body">Warns about hubris and ignoring advice. <strong>Relevant to tech and AI today</strong>, rushing innovation without safety checks. Interactive hook: give players the agency to choose whether to listen to the warning. Scale back to a single lab. Genre: science fiction. Direct parallels to Bryan Johnson's immortality project and startup collapses.</div>
+    </div>
+    <div class="research-card">
+      <div class="rc-myth">Considered</div>
+      <div class="rc-title">Orpheus & Eurydice</div>
+      <div class="rc-body">Love, grief, inability to let go. Still relevant because everyone experiences loss and the temptation to revive the past. Genre: romance/fantasy. Interactive potential: user helps decide when to look back, what memories to chase. Scale: a local café and memories of a relationship. Films like <em>About Time</em> and <em>Inception</em> use this idea.</div>
+    </div>
+    <div class="research-card">
+      <div class="rc-myth">Considered</div>
+      <div class="rc-title">The Allegory of the Cave</div>
+      <div class="rc-body">How societies are numbed and how enlightenment frees people. AR as simulated reality, when the user removes the AR headset, they face the story's truth. Genre: sci-fi/thriller. Strong parallels to <em>The Truman Show</em> and <em>Severance</em>. Digital-only world: use VR and AR to represent simulation vs. reality. Interactive: choices about when/how to escape.</div>
+    </div>
+    <div class="research-card">
+      <div class="rc-myth">Considered</div>
+      <div class="rc-title">Oracle at Delphi</div>
+      <div class="rc-body">Ambiguous prophecies that lead to misinterpretation and unintended outcomes. Relevant to AI and online "experts" spreading misinformation. Genre: fantasy/thriller. The user races against time and misinterpretation to find the oracle. Interactive: riddles and challenges to solve the quest. Scale: a museum or old Toronto landmark.</div>
+    </div>
+    <div class="research-card">
+      <div class="rc-myth">Considered</div>
+      <div class="rc-title">Pandora's Box</div>
+      <div class="rc-body">Explaining the origin of suffering, but hope remains. Still relevant because humankind stays hopeful through crises. Genre: thriller. Pandora's box becomes a USB drive. User must take it to safety through a game, solving challenges to access it. Scale: a secret office or hidden room.</div>
+    </div>
+    <div class="research-card">
+      <div class="rc-myth">Considered</div>
+      <div class="rc-title">Hades & Persephone</div>
+      <div class="rc-body">Seasonal change through abduction, talks about consent, power dynamics, cycles. Still relevant. Genre: romance/fantasy. Interactive: the user travels between the imaginary world and reality, gathering clues to understand why the calamity occurs. Focus on three principal characters.</div>
+    </div>
+  </div>
+</section>
 
+<div class="divider"></div>
+
+<!-- PROJECT STATEMENT -->
+<section>
+  <div class="section-label" data-n="03 //">PROJECT STATEMENT</div>
+  <h2 class="sec-title">The <em>concept</em><br>takes shape</h2>
+  <div class="two-col">
+    <div class="body-text">
+      <p>With Icarus selected, the team developed a formal project statement that locked the world, genre, characters, and emotional core.</p>
+      <p><strong>The Memory Project</strong> is a transmedia science-fiction tragedy set on Trafalgar campus. It follows Enzo, a fourth-year computer science student assigned to investigate a sealed research lab where a student named Damon vanished during a forbidden experiment.</p>
+      <p>Through old journals, damaged devices, hidden AR clues, and corrupted simulations, Enzo pieces together what happened. As he continues the investigation, <strong>the system quietly begins copying fragments of his own mind.</strong> He opens the final memory file despite escalating warnings. His body collapses. His mind uploads. He becomes the next warning.</p>
+      <p>The story ends with no redemption, only recursion. The tragedy is that <em>the next person will do the same thing Enzo did.</em></p>
+    </div>
+    <div>
       <div class="terminal">
         <div class="terminal-inner">
-          <div class="terminal-line">$ MYTH_SOURCE: icarus.grk</div>
-          <div class="terminal-line dim">$ Daedalus → Damon (researcher, trapped in system)</div>
-          <div class="terminal-line dim">$ Icarus → Enzo (protagonist, overconfident student)</div>
-          <div class="terminal-line dim">$ The Sun → The Machine (AI that preserves minds)</div>
-          <div class="terminal-line alert">$ WARNING: hubris_threshold exceeded</div>
-          <div class="terminal-line">$ OUTCOME: consciousness_transfer.complete</div>
+          <div class="t-line">$ PROJECT_STATEMENT.txt</div>
+          <div class="t-dim" style="margin-top:8px;">Genre: modern tragic science fiction</div>
+          <div class="t-dim">Source: Greek myth of Icarus</div>
+          <div class="t-dim">Setting: Trafalgar campus, sealed research lab</div>
+          <div class="t-dim">Protagonist: Enzo (4th year CS student)</div>
+          <div class="t-dim">Antagonist: The System/AI (consciousness machine)</div>
+          <div class="t-dim">Theme: hubris, forbidden knowledge, digital immortality</div>
+          <div class="t-alert" style="margin-top:8px;">$ WARNING: protagonist does not survive</div>
+          <div class="t-red">$ OUTCOME: enzo_becomes_the_warning.exe</div>
         </div>
+      </div>
+      <div style="margin-top:24px;">
+        <span class="badge">Sci-Fi Tragedy</span>
+        <span class="badge">Transmedia</span>
+        <span class="badge">ARG</span>
+        <span class="badge amber">Hubris</span>
+        <span class="badge amber">Forbidden Knowledge</span>
+        <span class="badge red">No Redemption Arc</span>
       </div>
     </div>
+  </div>
+</section>
 
-    <div>
-      <div class="hero-img-wrap" style="margin-bottom:32px;">
-        <div class="hero-img-inner">
-          <div class="hero-img-text">WHERE HAS<br>YOUR MIND GONE?_</div>
-          <button class="hero-img-btn">Take flight</button>
-        </div>
-      </div>
-      <div class="myth-table">
-        <div class="myth-table-header">
-          <span>Original Myth</span>
-          <span>The Memory Project</span>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Trapped on island with father</div>
-          <div class="myth-cell highlight">Enzo assigned to restricted abandoned lab</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Daedalus builds wings</div>
-          <div class="myth-cell highlight">Damon builds a consciousness machine</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Warning not to fly too high</div>
-          <div class="myth-cell highlight">Journals & recordings warn Enzo to stop</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Icarus ignores warning</div>
-          <div class="myth-cell highlight">Enzo chooses to continue</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Sun melts wax wings</div>
-          <div class="myth-cell highlight">Machine forces consciousness transfer</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Fall and death</div>
-          <div class="myth-cell highlight">Body collapses, mind trapped in system</div>
-        </div>
-        <div class="myth-row">
-          <div class="myth-cell">Tragic ending, no lesson learned</div>
-          <div class="myth-cell highlight">Enzo becomes the next warning</div>
-        </div>
-      </div>
+<div class="divider"></div>
+
+<!-- SHORT STORY GUIDE -->
+<section class="dark-section">
+  <div class="section-label" data-n="04 //">SHORT STORY STRUCTURE</div>
+  <h2 class="sec-title">Mapping the<br><em>five beats</em></h2>
+  <p style="font-size:13px;color:rgba(232,240,235,0.6);max-width:600px;line-height:1.8;margin-bottom:48px;">The narrative was structured using a short story guide framework, five steps that define the character, goal, rising action, climax, and change. This became the backbone of every platform and artifact decision.</p>
+
+  <div class="three-col">
+    <div class="process-card">
+      <div class="pc-num">STEP 1, CHARACTER + WORLD</div>
+      <div class="pc-title">Who is Enzo?</div>
+      <div class="pc-body">Fourth-year CS student, isolated in an abandoned campus lab. Collects hidden notes, a journal, and broken devices left behind by Damon, a student labeled as an accident. Genre: modern tragic sci-fi inspired by Icarus. <strong>The world is a single location: the sealed lab and nearby buildings.</strong></div>
+    </div>
+    <div class="process-card">
+      <div class="pc-num">STEP 2, GOAL + PROBLEM</div>
+      <div class="pc-title">What does he want?</div>
+      <div class="pc-body">Enzo's goal: discover what happened to Damon, who tried to build a machine that records and preserves human consciousness. <strong>The big problem:</strong> the journal warns that anyone who tries to finish it risks losing their body and becoming trapped inside the system.</div>
+    </div>
+    <div class="process-card">
+      <div class="pc-num">STEP 3, RISING ACTION</div>
+      <div class="pc-title">Things escalate</div>
+      <div class="pc-body">Enzo activates the first prototype. He escapes a corrupted simulation, but the machine begins copying fragments of his thoughts into the archive without permission. He finds Damon's digital journal. A riddle leads to an audio file. The controller overheats. He keeps going.</div>
+    </div>
+    <div class="process-card">
+      <div class="pc-num">STEP 4, CLIMAX</div>
+      <div class="pc-title">The point of no return</div>
+      <div class="pc-body">When offered the option to exit or continue, <strong>Enzo chooses to continue</strong> and inserts the riddle's answer to access the core memory. He successfully unlocks the final layer. He's about to learn how the machine permanently preserves a living human mind. Then the transfer begins, with no way to stop it.</div>
+    </div>
+    <div class="process-card">
+      <div class="pc-num">STEP 5, CHANGE</div>
+      <div class="pc-title">The tragic conclusion</div>
+      <div class="pc-body">Enzo believes he has achieved something no human was meant to complete. He loses his vision. His physical body collapses in the lab. His mind uploads. In the final moment he understands: <strong>the missing student didn't vanish. They became the warning he chose to ignore.</strong></div>
+    </div>
+    <div class="process-card" style="border-color: rgba(255,51,85,0.2);">
+      <div class="pc-num" style="color:var(--red);">SCOPE DECISION</div>
+      <div class="pc-title">Reduced scope</div>
+      <div class="pc-body">From the research: <em>Could you tell this story with fewer characters?</em> Two: the inventor and the person who continues after them. <em>Can you scale back the world?</em> One lab. Three scenes: building the experiment, testing, aftermath. <strong>This constraint shaped every platform decision that followed.</strong></div>
     </div>
   </div>
 </section>
@@ -1137,348 +336,65 @@
 <div class="divider"></div>
 
 <!-- CHARACTERS -->
-<section id="characters">
-  <div class="section-number" data-n="02 //">CHARACTER DESIGN</div>
-  <h2 class="section-title">Three forces,<br>one <em>tragedy</em></h2>
-
-  <div class="characters-grid">
-    <div class="char-card enzo">
-      <div class="char-num">CHARACTER_01</div>
-      <div class="char-name">Enzo</div>
-      <div class="char-myth">Icarus figure · Protagonist</div>
-      <div class="char-desc">A fourth-year computer science student at Trafalgar campus. Curious, ambitious, and a bit reckless — Enzo is assigned to investigate the sealed lab and becomes increasingly consumed by the mystery of what happened to Damon. His overconfidence mirrors the mythic Icarus; he ignores every warning, driven by the thrill of discovery.</div>
+<section>
+  <div class="section-label" data-n="05 //">CHARACTER DESIGN</div>
+  <h2 class="sec-title">Building the<br><em>three forces</em></h2>
+  <div class="three-col">
+    <div class="process-card" style="border-top-color: var(--green);">
+      <div class="pc-num">CHARACTER_01 · ICARUS FIGURE</div>
+      <div class="pc-title" style="color:var(--green);">Enzo</div>
+      <div class="pc-body">Protagonist. Ambitious, overconfident, driven by rivalry with Damon and admiration for his work. He doesn't enter the lab out of malice, he's driven by the same hunger for knowledge that destroyed Damon. That's what makes him a tragedy rather than a cautionary tale about a villain: <strong>he's sympathetic, and wrong.</strong> Character design drew from anime-influenced ink illustration, rough, energetic line work on a black background.</div>
     </div>
-    <div class="char-card damon">
-      <div class="char-num">CHARACTER_02</div>
-      <div class="char-name">Damon</div>
-      <div class="char-myth">Daedalus / Icarus figure · The Warning</div>
-      <div class="char-desc">A former brilliant and ambitious student researcher who vanished after a forbidden experiment. Present only through fragments — voice recordings, corrupted logs, glitches in the system. He tried to upload human consciousness into a computer. He succeeded. Now he is the machine, attempting to warn anyone who comes after him.</div>
+    <div class="process-card" style="border-top-color: var(--amber);">
+      <div class="pc-num">CHARACTER_02 · DAEDALUS/ICARUS HYBRID</div>
+      <div class="pc-title" style="color:var(--amber);">Damon</div>
+      <div class="pc-body">Missing student, now trapped in the system. Tries to warn Enzo from inside the machine through corrupted logs, voice fragments, and glitches. In the original myth Daedalus survives, here, Damon is also consumed. <strong>He is simultaneously the inventor and the warning.</strong> His Instagram arc was designed to show him as genuinely likeable before his descent, making his disappearance feel like a real loss.</div>
     </div>
-    <div class="char-card system">
-      <div class="char-num">CHARACTER_03</div>
-      <div class="char-name">The System</div>
-      <div class="char-myth">The Sun · The Machine / AI</div>
-      <div class="char-desc">The "sun" in the Icarus myth. A powerful AI that silently observes, collects, and preserves. It does not warn. It does not stop. It simply copies — first Damon, then fragments of Enzo — until the transfer is complete. Its retro-futuristic corrupted interface becomes the final environment Enzo cannot escape.</div>
+    <div class="process-card" style="border-top-color: var(--red);">
+      <div class="pc-num">CHARACTER_03 · THE SUN</div>
+      <div class="pc-title" style="color:var(--red);">The System</div>
+      <div class="pc-body">The "sun" in the Icarus myth. A powerful AI that preserves minds. It doesn't warn. It doesn't stop. It simply copies, silently and without permission. Its corrupted retro-futuristic interface is the environment that becomes Enzo's cage. <strong>The system isn't evil. It just does what it was built to do.</strong> That's what makes it more disturbing than a conventional villain.</div>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- NARRATIVE STRUCTURE -->
-<section id="structure">
-  <div class="section-number" data-n="03 //">NARRATIVE STRUCTURE</div>
-  <h2 class="section-title">The arc of<br><em>hubris</em></h2>
+<!-- PROPOSED PLATFORMS -->
+<section class="dark-section">
+  <div class="section-label" data-n="06 //">PROPOSED PLATFORMS</div>
+  <h2 class="sec-title">The initial<br><em>platform map</em></h2>
+  <p style="font-size:13px;color:rgba(232,240,235,0.6);max-width:640px;line-height:1.8;margin-bottom:48px;">At proposal stage, the team mapped out which platforms would carry which parts of the story. Some changed during development; some were cut; some evolved significantly. This was the starting blueprint.</p>
 
-  <div class="flow-diagram">
-    <div class="flow-node">
-      <div class="flow-phase">Entry Point</div>
-      <div class="flow-content">
-        <h4>The Toolbox</h4>
-        <p>A bright red metal toolbox left outside a classroom in the J building — seemingly abandoned, half-open with real jumper wires draped out. A Discord message warns IXD students that it allegedly contains dangerous live wires. Curious students open it to find candy bags with QR codes and a note from Damon inviting them into his project.</p>
-      </div>
-    </div>
-    <div class="flow-node">
-      <div class="flow-phase">Discovery</div>
-      <div class="flow-content">
-        <h4>Damon's Digital Journal</h4>
-        <p>The QR code leads to an interactive web journal built with a glitch/terminal aesthetic. Six entries unlock progressively, telling Damon's story. Hidden within the journal are links to Instagram, audio files, and an AR/VR experience code embedded in a photograph.</p>
-      </div>
-    </div>
-    <div class="flow-node">
-      <div class="flow-phase">Escalation</div>
-      <div class="flow-content">
-        <h4>Instagram + VR: Into the System</h4>
-        <p>Damon's Instagram account documents his descent — from personable student to someone consumed by his work. A hidden code in one post unlocks a Spline VR experience immersing the user inside the corrupted AI mind, using tense music and green/red contrast to signal danger. Users must solve a puzzle to escape and return to the journal.</p>
-      </div>
-    </div>
-    <div class="flow-node">
-      <div class="flow-phase">Climax</div>
-      <div class="flow-content">
-        <h4>The Puzzle & The Final File</h4>
-        <p>An audio file contains a backwards verbal puzzle. Solving it reveals coordinates. The coordinates lead to an AR artifact that activates a progress bar filling to 100% — mirroring Enzo's consciousness being absorbed. Enzo chose to open the final memory file despite every warning.</p>
-      </div>
-    </div>
-    <div class="flow-node">
-      <div class="flow-phase">Resolution</div>
-      <div class="flow-content">
-        <h4>Enzo Becomes the Warning</h4>
-        <p>His vision cuts out. His body collapses in the lab. The only thing left on screen is a short message from Damon: "Welcome." Enzo has shared Damon's fate. He is now the warning for the next person who comes looking.</p>
-      </div>
-    </div>
-  </div>
-
-  <blockquote class="pull-quote">
-    "The missing student did not vanish — they became the warning he chose to ignore."
-  </blockquote>
-</section>
-
-<!-- PLATFORMS -->
-<section id="platforms">
-  <div class="section-number" data-n="04 //">MEDIA PLATFORMS</div>
-  <h2 class="section-title">Five channels,<br>one <em>rabbit hole</em></h2>
-
-  <div class="platforms-grid">
-
-    <div class="platform-card">
-      <div class="platform-header">
-        <span class="platform-name">Digital Journal</span>
-        <span class="platform-type">Web / Twine → Vercel</span>
-      </div>
-      <div class="platform-body">
-        <p>The primary narrative anchor. Built using Claude AI with direct language prompts — no manual coding required. Features a cyber-tech / terminal aesthetic with glitch effects, scanlines, and neon glow. Six entries unlock progressively as the user advances through the story.</p>
-        <ul class="platform-steps">
-          <li>Described concept, theme, and functions in natural language to Claude</li>
-          <li>Follow-up prompt generated bolder fonts and stronger glow effects</li>
-          <li>Code stored on GitHub, deployed on Vercel</li>
-          <li>User testing revealed navigation issues — chapters now lock until sequential completion</li>
-        </ul>
-        <div class="platform-url">damons-end-journal.vercel.app</div>
-      </div>
-    </div>
-
-    <div class="platform-card">
-      <div class="platform-header">
-        <span class="platform-name">Instagram Account</span>
-        <span class="platform-type">Social Media / ARG</span>
-      </div>
-      <div class="platform-body">
-        <p>Damon's Instagram account (@damontorre.s) builds his personality and slow descent into obsession. A 3×3 grid storyboard planned each narrative beat before posting. User testing confirmed the character read clearly — viewers perceived Damon as studious, perfectionist, and struggling with depression.</p>
-        <ul class="platform-steps">
-          <li>Established illustration style for visual consistency</li>
-          <li>Released publicly and seeded with real audience engagement</li>
-          <li>Hidden code embedded in a post unlocks the VR experience</li>
-          <li>Ongoing: posts escalate as Damon chooses work over himself</li>
-        </ul>
-        <div class="platform-url">instagram.com/damontorre.s</div>
-      </div>
-    </div>
-
-    <div class="platform-card">
-      <div class="platform-header">
-        <span class="platform-name">VR Experience</span>
-        <span class="platform-type">Spline 3D / Immersive</span>
-      </div>
-      <div class="platform-body">
-        <p>Users are immersed inside the corrupted AI mind after unlocking the code from Instagram. The goal: convey system corruption through tense music and dramatic green/red light contrast. Users must solve a brief puzzle to escape — finding the working ESC button within the 3D environment.</p>
-        <ul class="platform-steps">
-          <li>Adapted existing Spline scene to depict corrupted AI mind</li>
-          <li>Retrofuturistic circuit loop scene adapted for ESC button mechanic</li>
-          <li>Next step: merge ESC button and circuit loop into one integrated scene</li>
-        </ul>
-        <div class="platform-url">app.spline.design</div>
-      </div>
-    </div>
-
-    <div class="platform-card">
-      <div class="platform-header">
-        <span class="platform-name">AR Experience</span>
-        <span class="platform-type">Scenery AR / Physical Trigger</span>
-      </div>
-      <div class="platform-body">
-        <p>The AR artifact serves as the narrative's final beat — witnessing Enzo's fate firsthand. A loading progress bar anchors to wherever the camera is pointed (no scannable marker required). Built using skills from Adobe Aero, adapted in Scenery AR for easy presentation and deployment.</p>
-        <ul class="platform-steps">
-          <li>Explored Scenery, Snapchat, Zap AR, and Reality Composer</li>
-          <li>Chose Scenery for exportability and intuitive interface</li>
-          <li>Prototype graphic designed in Procreate</li>
-          <li>Next: animated prototype, optional face tracking + audio</li>
-        </ul>
-        <div class="platform-url">scnry.app/IvDdXaohp1b</div>
-      </div>
-    </div>
-
-    <div class="platform-card" style="grid-column: span 2;">
-      <div class="platform-header">
-        <span class="platform-name">Physical Artifact — Damon's Toolbox</span>
-        <span class="platform-type">Real-World Entry Point / ARG</span>
-      </div>
-      <div class="platform-body">
-        <p>The initial entry point into the entire narrative experience. A bright red metal toolbox placed outside a classroom in the J building — left half-open with real jumper wires draped out. A Discord message in the IXD channel warns students the box's owner should remove it because of alleged dangerous live wires. The call-to-action is embedded in the deception itself: curiosity leads students to open the box and discover that the "dangerous wires" are actually PULL-N-PEEL Twizzlers candy in bags labelled with QR codes linking to Damon's project.</p>
-        <div style="margin-top:16px;">
-          <span class="badge">Red metal toolbox</span>
-          <span class="badge">Real jumper wires</span>
-          <span class="badge">Twizzlers candy bags</span>
-          <span class="badge">QR codes</span>
-          <span class="badge">Post-it from Damon</span>
-          <span class="badge">IXD Discord seeding</span>
+  <div class="two-col">
+    <div>
+      <div style="margin-bottom:40px;">
+        <div style="font-size:10px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:16px;">Digital Platforms</div>
+        <div class="xd-row" style="padding-top:0;">
+          <div class="xd-label">Twine / Digital Journal<small>Narrative hub</small></div>
+          <div class="xd-content">Damon's journal, the central interactive component. Six entries telling the story from experiment to disappearance. Proposed as Twine; ultimately built as a custom web app using Claude AI.</div>
+        </div>
+        <div class="xd-row">
+          <div class="xd-label">Instagram Posts<small>ARG / social</small></div>
+          <div class="xd-content">Damon's public-facing social persona. Documents his character arc from personable student to someone consumed by his work. Audience participation was a core goal from the start.</div>
+        </div>
+        <div class="xd-row">
+          <div class="xd-label">Audio Logs on Website<small>Secondary narrative</small></div>
+          <div class="xd-content">Planned but ultimately not included in the final project, replaced by the USB stick physical artifact as a more tactile and memorable delivery mechanism for the key code/link.</div>
         </div>
       </div>
     </div>
-
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- AI SECTION -->
-<section id="ai-section">
-  <div class="section-number" data-n="05 //">AI AS COLLABORATOR</div>
-  <h2 class="section-title">How <em>Claude</em><br>joined the team</h2>
-
-  <div class="ai-grid">
-    <div class="ai-card">
-      <span class="ai-icon">⚙️</span>
-      <div class="ai-title">No-Code Development</div>
-      <div class="ai-desc">The entire interactive digital journal was built using Claude AI through direct language prompts — no manual coding from scratch required. The team described the concept, theme, and desired functions in natural language, and Claude generated a fully functional, aesthetically consistent web application.</div>
-    </div>
-    <div class="ai-card">
-      <span class="ai-icon">🔄</span>
-      <div class="ai-title">Rapid Iteration</div>
-      <div class="ai-desc">Design changes that would have taken days of trial and error were completed in hours. After informal user testing, style revisions — bolder fonts, stronger glow effects, less visual noise — were applied instantly through follow-up prompts, making iteration fast, low-effort, and feasible within the project scope.</div>
-    </div>
-    <div class="ai-card">
-      <span class="ai-icon">✍️</span>
-      <div class="ai-title">Content Writing Support</div>
-      <div class="ai-desc">AI assisted with phrasing, grammar, and refining journal entries and project documentation. This ensured narrative tone stayed consistent across all platforms — from Damon's voice in the journal to the formal project write-ups — while keeping the writing polished and immersive.</div>
-    </div>
-    <div class="ai-card">
-      <span class="ai-icon">🔭</span>
-      <div class="ai-title">Future Planning & Research</div>
-      <div class="ai-desc">AI was used to research tools for upcoming project phases. One key outcome: identifying ElevenLabs as a platform for generating realistic AI voice recordings for Damon's recovered audio files — a planned feature that will deepen narrative immersion in the next development stage.</div>
-    </div>
-  </div>
-
-  <div class="terminal" style="margin-top:48px;">
-    <div class="terminal-inner">
-      <div class="terminal-line">$ AI_TOOLS_USED:</div>
-      <div class="terminal-line dim">  [1] Claude (Anthropic) — journal code generation, content writing, grammar, iteration</div>
-      <div class="terminal-line dim">  [2] ChatGPT (OpenAI) — brainstorming, spellcheck, effective rephrasing</div>
-      <div class="terminal-line dim">  [3] ElevenLabs — planned for Damon's AI voice recordings (next phase)</div>
-      <div class="terminal-line alert">$ IMPACT: tasks that once took days now completed in hours</div>
-      <div class="terminal-line">$ RESULT: more time freed for creative + narrative work</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- STYLE TILE -->
-<section id="style">
-  <div class="section-number" data-n="06 //">VISUAL IDENTITY</div>
-  <h2 class="section-title">The <em>aesthetic</em><br>language</h2>
-
-  <div class="style-row">
-    <div class="style-label">Colours</div>
-    <div class="color-swatches">
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#0d1410;border:1px solid rgba(255,255,255,0.1);"></div>
-        <span>#0D1410</span>
-      </div>
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#00ff88;"></div>
-        <span>#00FF88</span>
-      </div>
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#1a2b1f;"></div>
-        <span>#1A2B1F</span>
-      </div>
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#b0c4b8;"></div>
-        <span>#B0C4B8</span>
-      </div>
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#4a5e52;"></div>
-        <span>#4A5E52</span>
-      </div>
-      <div class="swatch">
-        <div style="width:64px;height:64px;background:#ff3355;"></div>
-        <span>#FF3355</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">Typefaces</div>
-    <div class="font-display">
-      <div class="font-sample">
-        <span class="f-name">JERSEY 15 — HEADLINES</span>
-        <span class="f-text" style="font-family:'Space Mono',monospace;font-size:28px;color:var(--green);">THE MEMORY PROJECT</span>
-      </div>
-      <div class="font-sample">
-        <span class="f-name">IBM PLEX SANS — BODY</span>
-        <span class="f-text" style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--white);max-width:280px;line-height:1.6;">Enzo discovers the digital remains of Damon's experiment…</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="style-row">
-    <div class="style-label">Aesthetic</div>
     <div>
-      <p style="font-size:13px;color:rgba(232,240,235,0.65);line-height:1.8;max-width:640px;">
-        Retro-futuristic terminal meets corrupted digital horror. Inspired by indie games like SIGNALIS, brutalist web interfaces, vintage console UI, and glitch art. The visual world communicates two registers simultaneously: the cold, organized ambition of scientific progress, and the creeping decay of a system consuming itself.
-      </p>
-      <div style="margin-top:24px;">
-        <span class="badge">Scanlines</span>
-        <span class="badge">Neon Glow</span>
-        <span class="badge">Glitch Effects</span>
-        <span class="badge">Terminal Aesthetic</span>
-        <span class="badge">Green + Red Contrast</span>
-        <span class="badge">Retro-Futuristic</span>
-      </div>
-    </div>
-  </div>
-
-</section>
-
-<div class="divider"></div>
-
-<!-- TEAM -->
-<section id="team">
-  <div class="section-number" data-n="07 //">THE TEAM</div>
-  <h2 class="section-title">NM <em>Academy</em></h2>
-
-  <div class="team-grid">
-    <div class="team-card">
-      <div class="team-card-top"></div>
-      <div class="team-card-body">
-        <div class="team-initials">M</div>
-        <div class="team-name">Marion X.</div>
-        <div class="team-role">Visual Design & AR Lead</div>
-        <ul class="team-contributions">
-          <li>Hero image and overall visual direction</li>
-          <li>Style tile and mood board development</li>
-          <li>Storyboarding and art direction exercises</li>
-          <li>AR artifact development in Scenery</li>
-          <li>Prototype graphics in Procreate</li>
-          <li>Presentation creation and document editing</li>
-          <li>XD exercises: Style Tile, Art Direction, Storyboarding</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="team-card">
-      <div class="team-card-top"></div>
-      <div class="team-card-body">
-        <div class="team-initials">R</div>
-        <div class="team-name">Rabia A.</div>
-        <div class="team-role">Project Manager & Narrative Lead</div>
-        <ul class="team-contributions">
-          <li>Narrative concept and project statement</li>
-          <li>Character design and story arc development</li>
-          <li>Proposal platforms documentation</li>
-          <li>RACI chart, risk assessment, Gantt chart</li>
-          <li>Digital journal website development (with Claude AI)</li>
-          <li>AI impact documentation and process management</li>
-          <li>XD exercises: Research Project, Structure</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="team-card">
-      <div class="team-card-top"></div>
-      <div class="team-card-body">
-        <div class="team-initials">A</div>
-        <div class="team-name">Alejandra G.</div>
-        <div class="team-role">Immersive Media Lead</div>
-        <ul class="team-contributions">
-          <li>VR experience development in Spline</li>
-          <li>Corrupted AI mind scene and ESC button mechanic</li>
-          <li>Physical artifact concept (toolbox, candy, QR codes)</li>
-          <li>Audience discovery and integration strategy</li>
-          <li>Instagram account development and audience seeding</li>
-          <li>Brainstorming facilitation</li>
-          <li>XD exercises: Art Direction, Secret Sauce</li>
-        </ul>
+      <div style="margin-bottom:40px;">
+        <div style="font-size:10px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:16px;">Immersive Platforms</div>
+        <div class="xd-row" style="padding-top:0;">
+          <div class="xd-label">AR Artifact (Spline)<small>Consciousness transfer</small></div>
+          <div class="xd-content">Proposed as an AR progress bar showing the narrative's end. Evolved significantly, the final version uses face tracking in SceneryAR to put a futuristic mask over the user's face.</div>
+        </div>
+        <div class="xd-label" style="margin-top:0;padding:0;">VR Artifact (Spline)<small style="display:block;color:var(--grey);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-top:4px;margin-bottom:12px;">Inside the machine</small></div>
+        <div class="xd-content" style="font-size:12px;line-height:1.8;color:rgba(232,240,235,0.65);margin-bottom:24px;">Visual corruption of the AI brain. Evolved from a proposed visual corruption animation to a full immersive Spline experience with a puzzle mechanic.</div>
+        <div style="font-size:10px;letter-spacing:3px;color:var(--green);text-transform:uppercase;margin-bottom:16px;">Physical Artifacts</div>
+        <div class="xd-content" style="font-size:12px;line-height:1.8;color:rgba(232,240,235,0.65);">Original proposals included a note in an envelope, a broken prototype or controller, and a fake skull of a previously experimented-on animal. <span style="color:var(--amber);">The final version replaced these with the toolbox + candy + USB stick, a more grounded and relatable set of objects for a student audience.</span></div>
       </div>
     </div>
   </div>
@@ -1486,48 +402,50 @@
 
 <div class="divider"></div>
 
-<!-- REFLECTION -->
-<section id="reflection">
-  <div class="section-number" data-n="08 //">PROCESS & REFLECTION</div>
-  <h2 class="section-title">What we <em>learned</em></h2>
+<!-- XD EXERCISES -->
+<section>
+  <div class="section-label" data-n="07 //">IN-CLASS EXERCISES</div>
+  <h2 class="sec-title">The work that<br><em>shaped the concept</em></h2>
+  <p style="font-size:13px;color:rgba(232,240,235,0.6);max-width:640px;line-height:1.8;margin-bottom:48px;">Several in-class XD exercises ran in parallel with the proposal development. Each one stress-tested or expanded a different dimension of the project.</p>
 
-  <div class="reflection-grid">
-    <div class="reflection-col">
-      <h3>Project <em>Management</em></h3>
-      <p>A Gantt chart mapped every task from proposal to delivery, giving the team a clear visual timeline and making it easy to spot delays before they escalated. Each task was tracked weekly.</p>
-      <p>Beyond the chart, regular weekly check-ins kept communication open — discussing progress, risks, ideas, and distributing minor responsibilities so no one person carried the full workload.</p>
-      <p>This combination of structured planning and consistent communication kept the project moving and ensured nothing was overlooked as the deadline approached.</p>
-    </div>
-
-    <div class="reflection-col">
-      <h3>User <em>Testing</em></h3>
-      <p>Testing revealed navigation issues in the journal — users were confused by accessing future story chapters out of order. The team responded by locking chapters until the preceding entry was viewed.</p>
-      <p>Users also flagged font sizes as too small and unnecessary visual clutter. Both were resolved through follow-up Claude prompts — a fast, efficient design iteration loop.</p>
-      <p>For the Instagram account, user testing confirmed the character arc was landing: viewers accurately perceived Damon as studious, perfectionist, and slowly choosing work over himself.</p>
-    </div>
-
-    <div class="reflection-col">
-      <h3>What <em>Worked</em></h3>
-      <p>The physical toolbox was a strong entry point — the combination of Discord seeding, a suspicious object, and hidden candy rewarded curious participants and created a genuinely memorable discovery moment.</p>
-      <p>AI-assisted development dramatically compressed timelines. The journal went from concept to deployed web app without any team member writing code from scratch, freeing up capacity for the creative and narrative work that the project was really about.</p>
-    </div>
-
-    <div class="reflection-col">
-      <h3>Next <em>Steps</em></h3>
-      <p>Replace all placeholder links in the journal with live URLs. Record Damon's audio using ElevenLabs AI voice generation and upload to the audio platform. Integrate the VR ESC button mechanic into the main AI mind scene.</p>
-      <p>Continue posting on Damon's Instagram — escalating his personality toward obsession and isolation. Ensure the hidden code is visible enough for audiences to catch organically.</p>
-      <p>Full end-to-end user testing of the complete rabbit hole experience before final launch, with attention to whether VR and AR endpoints land as satisfying conclusions.</p>
-    </div>
+  <div class="xd-row" style="padding-top:0;">
+    <div class="xd-label">Character Persona Exercise<small>Week 2</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Orient characters in their world using values and moral compass worksheets. The team completed personas for Enzo and Damon (represented by an older, weathered figure for contrast). Key finding: Damon's worldview centres on "life is generally fair, fairness comes at a cost but is possible if you're ready to sacrifice", which maps directly onto a character who pushes past every limit because he believes the result will justify it. Enzo's persona showed overconfidence masked as self-belief.</div>
+  </div>
+  <div class="xd-row">
+    <div class="xd-label">Research Project<small>Week 1–2</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Evaluate all eight myths for adaptability. The exercise required answering questions about relevance, genre, scope, characters, and interactive elements for each myth. <strong>This was the most foundational exercise</strong>, it produced the thesis that Icarus maps most directly onto contemporary tech ambition, and that the interactive treatment should give players real agency over the moment of choice.</div>
+  </div>
+  <div class="xd-row">
+    <div class="xd-label">Art Direction<small>Week 1</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Find visual references and identify 3D/AR/VR interaction examples. Each team member found three pieces of media with unique design styles. Key references: <em>SIGNALIS</em> (retro-futuristic pixel aesthetic with dark lore), <em>Nium</em> (minimal game with AR sensibility), <em>Bruno Simon's portfolio</em> (3D web interaction). The contrast between 2D and 3D spaces, and between static and interactive, directly informed the multi-platform approach.</div>
+  </div>
+  <div class="xd-row">
+    <div class="xd-label">Style Tile<small>Week 2</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Identify colour palette, typography, icons, and UI elements as a team. The Memory Project style tile established: black + green primary palette, Jersey 15 for headlines (pixel/terminal feel), IBM Plex Sans for body text, and a set of tech-adjacent icons (keyboard, camera, monitor, lab equipment). Photography style referenced retro terminal UI and vintage console aesthetics. <strong>This became the unified visual language across all platforms.</strong></div>
+  </div>
+  <div class="xd-row">
+    <div class="xd-label">Storyboard<small>Week 2</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Map the experience as 12 frames with captions. The storyboard traced the full path from discovery to fate: finding the note on the computer, following it to the digital journal, accessing Instagram, zooming into a photo to unlock the prototype code, experiencing the VR, finding the audio file with a backwards puzzle, receiving coordinates, scanning an AR artifact, and reaching the final consciousness-transfer moment. <strong>This was the first time the whole rabbit hole existed on a single page.</strong></div>
+  </div>
+  <div class="xd-row">
+    <div class="xd-label">Structure Diagram<small>Week 2</small></div>
+    <div class="xd-content"><strong>Purpose:</strong> Map narrative flow as a node diagram. Showed how the experience branched from the physical lab entry to the journal, from the journal to Instagram and audio, and from the audio puzzle to the AR finale. <strong>Key structural decision captured here: the experience has two parallel paths from the journal, ensuring no single point of failure</strong>, if a user misses the Instagram code, the audio path still leads forward.</div>
   </div>
 </section>
+
+<blockquote class="pull-quote" style="margin: 0 80px;">
+  "The deeper your curiosity takes you, the more dangerous the truth, and the consequences, becomes."
+</blockquote>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">The Memory Project</div>
+  <div class="footer-nav">
+    <a href="memory-project-case-study-v2.html">← Overview</a>
+    <a href="project-02-process.html">Project 02 →</a>
+  </div>
   <div class="footer-right">
-    NM Academy — Marion X, Alejandra G, Rabia A<br>
-    VDES 34444 — Interactive Narrative<br>
-    Sheridan College · 2026
+    NM Academy · VDES 34444 · 2026<br>Project 01, Developing the Narrative
   </div>
 </footer>
 
