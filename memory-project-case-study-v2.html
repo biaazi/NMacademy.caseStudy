@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE MEMORY PROJECT, Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080c0a;
+    --dark: #0d1410;
+    --green: #00ff88;
+    --green-dim: #00cc66;
+    --green-glow: rgba(0,255,136,0.15);
+    --green-faint: rgba(0,255,136,0.06);
+    --red: #ff3355;
+    --amber: #ffaa00;
+    --white: #e8f0eb;
+    --grey: #4a5e52;
+    --mid: #1a2b1f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* SCANLINES OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,255,136,0.12);
+    background: rgba(8,12,10,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 10px;
+    color: var(--grey);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 80px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 70% 50%, rgba(0,255,136,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-tag::before {
+    content: '> ';
+    opacity: 0.5;
+  }
+
+  h1.hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(56px, 9vw, 120px);
+    line-height: 0.92;
+    letter-spacing: -2px;
+    color: var(--white);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  h1.hero-title em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .hero-sub {
+    font-size: 11px;
+    color: var(--grey);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .meta-item label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .meta-item span {
+    font-size: 13px;
+    color: var(--green);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    right: 80px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--grey);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .hero-scroll::after {
+    content: '';
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--grey), transparent);
+  }
+
+  /* GLITCH LINE */
+  .glitch-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--green), transparent);
+    opacity: 0.3;
+    margin: 0;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 80px;
+    position: relative;
+  }
+
+  .section-number {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-number::before {
+    content: attr(data-n);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--grey);
+  }
+
+  h2.section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.0;
+    margin-bottom: 48px;
+    letter-spacing: -1px;
+  }
+
+  h2.section-title em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  /* SYNOPSIS */
+  #synopsis {
+    background: var(--dark);
+    border-top: 1px solid rgba(0,255,136,0.08);
+    border-bottom: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .synopsis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .synopsis-text p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: rgba(232,240,235,0.75);
+    margin-bottom: 20px;
+  }
+
+  .synopsis-text p strong {
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  .myth-table {
+    border: 1px solid rgba(0,255,136,0.15);
+    overflow: hidden;
+  }
+
+  .myth-table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(0,255,136,0.06);
+    border-bottom: 1px solid rgba(0,255,136,0.15);
+  }
+
+  .myth-table-header span {
+    padding: 12px 20px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  .myth-table-header span:first-child {
+    border-right: 1px solid rgba(0,255,136,0.15);
+  }
+
+  .myth-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .myth-row:last-child { border-bottom: none; }
+
+  .myth-cell {
+    padding: 14px 20px;
+    font-size: 11px;
+    color: rgba(232,240,235,0.65);
+    line-height: 1.5;
+  }
+
+  .myth-cell:first-child {
+    border-right: 1px solid rgba(0,255,136,0.08);
+    color: var(--grey);
+  }
+
+  .myth-cell.highlight { color: var(--white); }
+
+  /* HERO IMAGE DISPLAY */
+  .hero-img-wrap {
+    background: var(--mid);
+    border: 1px solid rgba(0,255,136,0.15);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-img-wrap::before {
+    content: 'HERO IMAGE, THE MEMORY PROJECT';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 8px 16px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green);
+    background: rgba(0,255,136,0.06);
+    border-bottom: 1px solid rgba(0,255,136,0.12);
+    z-index: 1;
+  }
+
+  .hero-img-inner {
+    padding-top: 32px;
+    background: #0a0e0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    flex-direction: column;
+    gap: 16px;
+    padding: 48px 32px 32px;
+  }
+
+  .hero-img-text {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(20px, 3vw, 32px);
+    color: var(--green);
+    text-align: center;
+    line-height: 1.2;
+    text-shadow: 0 0 30px rgba(0,255,136,0.5);
+    letter-spacing: 1px;
+  }
+
+  .hero-img-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border: 1px solid var(--green);
+    background: transparent;
+    color: var(--green);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .hero-img-btn:hover { background: var(--green-glow); }
+
+  .hero-img-btn::after { content: '→'; }
+
+  .hero-img-char {
+    width: 120px;
+    height: 140px;
+    position: relative;
+    margin-left: auto;
+  }
+
+  /* CHARACTERS */
+  #characters {
+    background: var(--black);
+  }
+
+  .characters-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .char-card {
+    background: var(--dark);
+    border: 1px solid rgba(0,255,136,0.08);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .char-card:hover { border-color: rgba(0,255,136,0.3); }
+
+  .char-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .char-card.enzo::before { background: var(--green); }
+  .char-card.damon::before { background: var(--amber); }
+  .char-card.system::before { background: var(--red); }
+
+  .char-num {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--grey);
+    margin-bottom: 20px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .char-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .char-card.enzo .char-name { color: var(--green); }
+  .char-card.damon .char-name { color: var(--amber); }
+  .char-card.system .char-name { color: var(--red); }
+
+  .char-myth {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .char-desc {
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(232,240,235,0.65);
+  }
+
+  /* PLATFORMS */
+  #platforms {
+    background: var(--dark);
+    border-top: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .platforms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .platform-card {
+    border: 1px solid rgba(0,255,136,0.12);
+    background: var(--black);
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .platform-card:hover {
+    border-color: rgba(0,255,136,0.35);
+    transform: translateY(-4px);
+  }
+
+  .platform-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(0,255,136,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,255,136,0.04);
+  }
+
+  .platform-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+
+  .platform-type {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .platform-body {
+    padding: 28px;
+  }
+
+  .platform-body p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(232,240,235,0.65);
+    margin-bottom: 16px;
+  }
+
+  .platform-url {
+    font-size: 10px;
+    color: var(--green);
+    word-break: break-all;
+    opacity: 0.7;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .platform-steps {
+    list-style: none;
+    margin-top: 12px;
+  }
+
+  .platform-steps li {
+    font-size: 11px;
+    color: rgba(232,240,235,0.55);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0,255,136,0.05);
+    display: flex;
+    gap: 10px;
+    line-height: 1.6;
+  }
+
+  .platform-steps li::before {
+    content: '-';
+    color: var(--green);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* AI SECTION */
+  #ai-section {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #ai-section::before {
+    content: 'AI_IMPACT.LOG';
+    position: absolute;
+    top: 40px;
+    right: 80px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 120px;
+    color: rgba(0,255,136,0.03);
+    letter-spacing: -4px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .ai-card {
+    background: var(--dark);
+    padding: 40px;
+    border: 1px solid rgba(0,255,136,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--green);
+    transition: width 0.5s;
+  }
+
+  .ai-card:hover::after { width: 100%; }
+
+  .ai-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .ai-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .ai-desc {
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(232,240,235,0.6);
+  }
+
+  /* NARRATIVE STRUCTURE */
+  #structure {
+    background: var(--dark);
+    border-top: 1px solid rgba(0,255,136,0.08);
+    border-bottom: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 48px;
+  }
+
+  .flow-diagram::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--green), rgba(0,255,136,0.1));
+  }
+
+  .flow-node {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 28px;
+    align-items: start;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(0,255,136,0.06);
+    position: relative;
+  }
+
+  .flow-node:last-child { border-bottom: none; }
+
+  .flow-node::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 36px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--green);
+    background: var(--dark);
+    transform: rotate(45deg);
+  }
+
+  .flow-phase {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--green);
+    text-transform: uppercase;
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+
+  .flow-content h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .flow-content p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(232,240,235,0.6);
+  }
+
+  /* TEAM */
+  #team {
+    background: var(--black);
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .team-card {
+    background: var(--dark);
+    border: 1px solid rgba(0,255,136,0.1);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .team-card:hover { border-color: rgba(0,255,136,0.3); }
+
+  .team-card-top {
+    height: 8px;
+    background: linear-gradient(to right, var(--green-dim), var(--green));
+  }
+
+  .team-card-body {
+    padding: 36px 32px;
+  }
+
+  .team-initials {
+    width: 56px;
+    height: 56px;
+    border: 1px solid rgba(0,255,136,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--green);
+    margin-bottom: 20px;
+  }
+
+  .team-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .team-role {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .team-contributions {
+    list-style: none;
+  }
+
+  .team-contributions li {
+    font-size: 11px;
+    color: rgba(232,240,235,0.55);
+    padding: 5px 0;
+    display: flex;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  .team-contributions li::before {
+    content: '▸';
+    color: var(--green);
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+
+  /* REFLECTION */
+  #reflection {
+    background: var(--dark);
+    border-top: 1px solid rgba(0,255,136,0.08);
+  }
+
+  .reflection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .reflection-col h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--white);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0,255,136,0.12);
+  }
+
+  .reflection-col h3 em {
+    font-style: italic;
+    color: var(--green);
+  }
+
+  .reflection-col p {
+    font-size: 13px;
+    line-height: 1.9;
+    color: rgba(232,240,235,0.65);
+    margin-bottom: 16px;
+  }
+
+  /* STYLE TILE */
+  #style {
+    background: var(--black);
+  }
+
+  .style-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(0,255,136,0.06);
+  }
+
+  .style-row:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .style-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--grey);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: 8px 0;
+  }
+
+  .color-swatches {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    width: 64px;
+    height: 64px;
+    position: relative;
+  }
+
+  .swatch span {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    font-size: 8px;
+    color: var(--grey);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .font-display {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  .font-sample {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .font-sample .f-name {
+    font-size: 9px;
+    color: var(--grey);
+    letter-spacing: 2px;
+  }
+
+  .font-sample .f-text {
+    color: var(--white);
+  }
+
+  .icon-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .icon-badge {
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(0,255,136,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 60px 80px;
+    border-top: 1px solid rgba(0,255,136,0.12);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--green);
+  }
+
+  .footer-right {
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 2px;
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* TERMINAL BLOCK */
+  .terminal {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,255,136,0.15);
+    padding: 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--green-dim);
+    line-height: 1.8;
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .terminal::before {
+    content: '●  ●  ●';
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    font-size: 8px;
+    color: var(--grey);
+    letter-spacing: 4px;
+  }
+
+  .terminal-inner {
+    padding-top: 16px;
+  }
+
+  .terminal-line { color: rgba(0,255,136,0.8); }
+  .terminal-line.dim { color: var(--grey); }
+  .terminal-line.alert { color: var(--amber); }
+
+  /* QUOTE */
+  .pull-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-style: italic;
+    color: var(--green);
+    line-height: 1.4;
+    padding: 48px 0;
+    border-top: 1px solid rgba(0,255,136,0.15);
+    border-bottom: 1px solid rgba(0,255,136,0.15);
+    margin: 48px 0;
+    text-align: center;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* STATUS DOT */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  .status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes glitch {
+    0%, 90%, 100% { clip-path: none; transform: none; }
+    91% { clip-path: inset(20% 0 60% 0); transform: translateX(-4px); }
+    93% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
+    95% { clip-path: none; transform: none; }
+  }
+
+  .glitch-text {
+    position: relative;
+    animation: glitch 6s infinite;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0,255,136,0.2), transparent);
+    margin: 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    section, nav, footer { padding-left: 32px; padding-right: 32px; }
+    #hero { padding: 100px 32px 60px; }
+    .synopsis-grid, .platforms-grid, .ai-grid, .reflection-grid { grid-template-columns: 1fr; gap: 40px; }
+    .characters-grid, .team-grid { grid-template-columns: 1fr; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    h1.hero-title { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">The Memory Project, Case Study</div>
+  <ul class="nav-links">
+    <li><a href="#synopsis">Concept</a></li>
+    <li><a href="#platforms">Platforms</a></li>
+    <li><a href="#ai-section">AI</a></li>
+    <li><a href="#usability">Testing</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#reflection">Reflection</a></li>
+    <li><a href="project-01-process.html" style="color:var(--green);border-left:1px solid rgba(0,255,136,0.2);padding-left:28px;">P1</a></li>
+    <li><a href="project-02-process.html">P2</a></li>
+    <li><a href="project-03-process.html">P3</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">VDES 34444, Interactive Narrative &nbsp;&nbsp; NM Academy</div>
+  <h1 class="hero-title glitch-text">The <em>Memory</em><br>Project</h1>
+  <p class="hero-sub">A Transmedia Sci-Fi Tragedy &nbsp;·&nbsp; Icarus Reimagined &nbsp;·&nbsp; 2026</p>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <label>Course</label>
+      <span>VDES 34444</span>
+    </div>
+    <div class="meta-item">
+      <label>Group</label>
+      <span>NM Academy</span>
+    </div>
+    <div class="meta-item">
+      <label>Genre</label>
+      <span>Sci-Fi Tragedy</span>
+    </div>
+    <div class="meta-item">
+      <label>Status</label>
+      <span class="status">Complete</span>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<div class="glitch-line"></div>
+
+<!-- SYNOPSIS -->
+<section id="synopsis">
+  <div class="section-number" data-n="01 //">PROJECT SYNOPSIS</div>
+  <h2 class="section-title">Where has your<br><em>mind</em> gone?</h2>
+
+  <div class="synopsis-grid">
+    <div class="synopsis-text">
+      <p>
+        <strong>The Memory Project</strong> is a transmedia science-fiction tragedy that reimagines the Greek myth of Icarus as a cautionary tale about unchecked ambition in the age of digital consciousness.
+      </p>
+      <p>
+        Set on Trafalgar campus, the story follows <strong>Enzo</strong>, a fourth-year computer science student assigned to investigate a sealed research lab after a student named Damon vanished during a forbidden experiment.
+      </p>
+      <p>
+        Through old journals, damaged devices, hidden AR clues, and corrupted simulations, Enzo pieces together the truth: Damon tried to upload human consciousness into a machine, and it worked. As Enzo continues the investigation, the system quietly begins copying <em>his</em> mind.
+      </p>
+      <p>
+        In the end, Enzo opens the final memory file despite escalating warnings. His body collapses. His mind uploads. <strong>He becomes the next warning.</strong>
+      </p>
+
+      <div class="terminal">
+        <div class="terminal-inner">
+          <div class="terminal-line">$ MYTH_SOURCE: icarus.grk</div>
+          <div class="terminal-line dim">$ Daedalus → Damon (researcher, trapped in system)</div>
+          <div class="terminal-line dim">$ Icarus → Enzo (protagonist, overconfident student)</div>
+          <div class="terminal-line dim">$ The Sun → The Machine (AI that preserves minds)</div>
+          <div class="terminal-line alert">$ WARNING: hubris_threshold exceeded</div>
+          <div class="terminal-line">$ OUTCOME: consciousness_transfer.complete</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="hero-img-wrap" style="margin-bottom:32px;">
+        <div class="hero-img-inner" style="padding:0;min-height:auto;background:#080c0a;">
+          <img src="data:image/jpeg;base64,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" alt="Enzo — The Memory Project character illustration" style="width:100%;display:block;max-height:380px;object-fit:cover;object-position:center top;" />
+        </div>
+      </div>
+      <div class="myth-table">
+        <div class="myth-table-header">
+          <span>Original Myth</span>
+          <span>The Memory Project</span>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Trapped on island with father</div>
+          <div class="myth-cell highlight">Enzo assigned to restricted abandoned lab</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Daedalus builds wings</div>
+          <div class="myth-cell highlight">Damon builds a consciousness machine</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Warning not to fly too high</div>
+          <div class="myth-cell highlight">Journals & recordings warn Enzo to stop</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Icarus ignores warning</div>
+          <div class="myth-cell highlight">Enzo chooses to continue</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Sun melts wax wings</div>
+          <div class="myth-cell highlight">Machine forces consciousness transfer</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Fall and death</div>
+          <div class="myth-cell highlight">Body collapses, mind trapped in system</div>
+        </div>
+        <div class="myth-row">
+          <div class="myth-cell">Tragic ending, no lesson learned</div>
+          <div class="myth-cell highlight">Enzo becomes the next warning</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CHARACTERS -->
+<section id="characters">
+  <div class="section-number" data-n="02 //">CHARACTER DESIGN</div>
+  <h2 class="section-title">Three forces,<br>one <em>tragedy</em></h2>
+
+  <div class="characters-grid">
+    <div class="char-card enzo">
+      <div class="char-num">CHARACTER_01</div>
+      <div class="char-name">Enzo</div>
+      <div class="char-myth">Icarus figure · Protagonist</div>
+      <div class="char-desc">A fourth-year computer science student driven by rivalry with Damon and admiration for his work. Enzo's passion towards his classmate mixed with his own ambition pushes him down a path he can't return from. His overconfidence mirrors the mythic Icarus, he ignores every warning, and in the end, joins Damon in his fate.</div>
+    </div>
+    <div class="char-card damon">
+      <div class="char-num">CHARACTER_02</div>
+      <div class="char-name">Damon</div>
+      <div class="char-myth">Daedalus / Icarus figure · The Warning</div>
+      <div class="char-desc">Starts off as a personable, relatable student who likes to work hard and push himself. But his ambition wins out over self-preservation, he becomes someone who concerns the people around him, and eventually meets his doom. His last Instagram post visually erases him from reality. Now present only as fragments: voice recordings, corrupted logs, glitches.</div>
+    </div>
+    <div class="char-card system">
+      <div class="char-num">CHARACTER_03</div>
+      <div class="char-name">The System</div>
+      <div class="char-myth">The Sun · The Machine / AI</div>
+      <div class="char-desc">The "sun" in the Icarus myth. A powerful AI that silently observes, collects, and preserves. It does not warn. It does not stop. It simply copies, first Damon, then fragments of Enzo, until the transfer is complete. Its retro-futuristic corrupted interface becomes the final environment Enzo cannot escape.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- NARRATIVE STRUCTURE -->
+<section id="structure">
+  <div class="section-number" data-n="03 //">NARRATIVE STRUCTURE</div>
+  <h2 class="section-title">The arc of<br><em>hubris</em></h2>
+
+  <div class="flow-diagram">
+    <div class="flow-node">
+      <div class="flow-phase">Entry Point</div>
+      <div class="flow-content">
+        <h4>The Note + Toolbox</h4>
+        <p>An angry handwritten note posted near classroom AA1A reads: <em>"To whoever left a red box full of wires in AA1A, please remove them!"</em> Designed like "office drama," it sparks curiosity and draws people into the room. Inside: Damon's red toolbox, left half-open with real jumper wires draped out. Opening it reveals Twizzler candy bags resembling wires and a QR code linking to Damon's journal.</p>
+      </div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-phase">Discovery</div>
+      <div class="flow-content">
+        <h4>Damon's Digital Journal</h4>
+        <p>The QR code leads to <strong>damons-end-journal.vercel.app</strong>, a CRT/terminal aesthetic journal with glitch effects and scanlines. Six entries unlock progressively, chronicling Damon's arc from first experiment to disappearance. The journal breaks the fourth wall by referencing real Sheridan classroom numbers, grounding Damon as a believable IXD student. Embedded clues link to Instagram and the VR experience.</p>
+      </div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-phase">Escalation</div>
+      <div class="flow-content">
+        <h4>Instagram → VR: Into the System</h4>
+        <p>Damon's Instagram (@damontorre.s) documents his full arc, humble and personable at first, then consumed by his work, his final post visually erasing him from reality. Real audience members have commented with growing concern. A hidden code in his post unlocks the Spline VR experience. Giant hands try to trap the user inside the corrupted AI mind. Strong colour shifts from blue to red signal something is deeply wrong. The only escape: solving the scrambled image puzzle to find the USB stick clue.</p>
+      </div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-phase">Physical Pivot</div>
+      <div class="flow-content">
+        <h4>Damon's USB Stick</h4>
+        <p>Completing the VR puzzle reveals an image of the classroom AA1A desk, and Damon's blue USB stick sitting on it. The physical USB is planted in the actual room. Plugging it in reveals one file: a text document containing a single URL.</p>
+      </div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-phase">Unlock</div>
+      <div class="flow-content">
+        <h4>ICARUS7, Access Code Website</h4>
+        <p>The URL leads to <strong>icarus7.vercel.app</strong>, a terminal page displaying the access code <em>ICARUS7</em>. Hovering triggers a red/cyan chromatic glitch; animated scanlines pass top to bottom; corner bracket markers and a pulsing live status dot complete the world. Entering this code into the journal unlocks the final chapter.</p>
+      </div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-phase">Resolution</div>
+      <div class="flow-content">
+        <h4>AR Face-Scan, Consciousness Transfer Complete</h4>
+        <p>The final experience at <strong>scnry.app/SQ5TS9Jti2b</strong> uses face tracking via SceneryAR. The user sees an innocuous loading symbol, then a glossy futuristic mask locks onto their face alongside the message: <em>"SYSTEM CONSCIOUSNESS UPLOAD COMPLETE. YOU ARE NO MORE AND HAVE JOINED DAMON IN HIS FATE. ERASURE FROM REALITY IMMINENT."</em> Neither the mask nor the message can be dismissed. Enzo joins Damon. The narrative ends.</p>
+      </div>
+    </div>
+  </div>
+
+  <blockquote class="pull-quote">
+    "The missing student did not vanish, they became the warning he chose to ignore."
+  </blockquote>
+</section>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="section-number" data-n="04 //">MEDIA PLATFORMS</div>
+  <h2 class="section-title">Seven artifacts,<br>one <em>rabbit hole</em></h2>
+
+  <div class="platforms-grid">
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Physical: The Note + Toolbox</span>
+        <span class="platform-type">Real-World Entry Point</span>
+      </div>
+      <div class="platform-body">
+        <p>A two-part physical hook. First: an angry handwritten note posted near classroom AA1A, <em>"To whoever left a red box full of wires, please remove them!"</em> The "office drama" format drives curiosity and foot traffic. Second: Damon's red toolbox left half-open on the desk with real jumper wires hanging out. Opening it yields Twizzler candy bags resembling wires, each with a QR code to Damon's journal. Users expressed light enjoyment at being rewarded with candy.</p>
+        <div style="margin-top:16px;">
+          <span class="badge">Handwritten note</span>
+          <span class="badge">Red metal toolbox</span>
+          <span class="badge">Jumper wires</span>
+          <span class="badge">Twizzler candy bags</span>
+          <span class="badge">QR code CTA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Digital Journal</span>
+        <span class="platform-type">Web → GitHub → Vercel</span>
+      </div>
+      <div class="platform-body">
+        <p>The primary narrative hub. Built entirely with Claude AI through natural language prompts, no manual coding. CRT/terminal aesthetic with glitch effects, scanlines, neon glow. Six entries unlock progressively. References real Sheridan classroom numbers to blur the line between fiction and reality. A code puzzle gates the final chapter, requiring clues gathered across the full experience.</p>
+        <ul class="platform-steps">
+          <li>Concept, theme, and functions described to Claude in direct language</li>
+          <li>Style iteration done via follow-up prompts, bolder fonts, stronger glow</li>
+          <li>User testing: added lock icons to prevent out-of-order chapter access</li>
+          <li>Culminates in AR face-scan sequence and consciousness-transfer end screen</li>
+        </ul>
+        <div class="platform-url">damons-end-journal.vercel.app</div>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Instagram Account</span>
+        <span class="platform-type">Social Media / ARG</span>
+      </div>
+      <div class="platform-body">
+        <p>Damon's complete Instagram visually documents every stage of his character arc, humble and personable early on, then progressively consumed by his work. His final post appears to erase him from reality entirely. Real audience members have commented with genuine concern. Two rabbit holes embedded, one in the post, one in the comments, to ensure the transition to VR is clear.</p>
+        <ul class="platform-steps">
+          <li>3×3 grid storyboard mapped each narrative beat before posting</li>
+          <li>User testing: audience correctly interpreted Damon's personality and arc</li>
+          <li>Hidden VR code in post; secondary path in comments as backup</li>
+          <li>Audience expressed enthusiasm engaging creatively with his account</li>
+        </ul>
+        <div class="platform-url">instagram.com/damontorre.s</div>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">VR Experience</span>
+        <span class="platform-type">Spline 3D / Immersive</span>
+      </div>
+      <div class="platform-body">
+        <p>Users enter the corrupted AI mind after finding the code on Damon's Instagram. Strong colour shifts from blue to red, giant hands looming and trying to trap the user, their control is minimal. The only escape: solving the scrambled image puzzle to reveal the USB desk location. The goal is to make the user feel like a puppet inside a system that is malfunctioning around them.</p>
+        <ul class="platform-steps">
+          <li>Users felt "like a puppet", the intended sensation of lost control</li>
+          <li>Camera movement flagged as too fast; caused dizziness, adjusted</li>
+          <li>Puzzle interactivity unclear to some users; needs better signposting</li>
+          <li>Floating hands not perceived as threatening, visual intent to revisit</li>
+        </ul>
+        <div class="platform-url">app.spline.design/community/file/15eba527...</div>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Physical: USB Stick</span>
+        <span class="platform-type">Physical Artifact → Digital Bridge</span>
+      </div>
+      <div class="platform-body">
+        <p>After solving the VR puzzle, users discover an image of the actual classroom AA1A desk, with Damon's blue USB stick sitting on it. The real USB is planted in the room. Plugging it in reveals a single text file with one URL. A deliberate bridge between the immersive digital space and the physical world of the school.</p>
+        <div style="margin-top:16px;">
+          <span class="badge">Blue USB stick</span>
+          <span class="badge">Physical plant in classroom</span>
+          <span class="badge">Single text file</span>
+          <span class="badge">One URL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">ICARUS7, Access Code Site</span>
+        <span class="platform-type">Web → Vercel</span>
+      </div>
+      <div class="platform-body">
+        <p>The USB's text file leads here. A stark terminal page displaying <strong>ICARUS7</strong> in glowing green, the access code to unlock the journal's final chapter. Hovering triggers a red/cyan chromatic glitch effect. An animated scanline passes continuously top to bottom. Corner bracket markers and a pulsing live status indicator complete the aesthetic. Clean, eerie, and purposeful.</p>
+        <ul class="platform-steps">
+          <li>Hover state: chromatic aberration glitch on ICARUS7</li>
+          <li>Continuous scanline animation top to bottom</li>
+          <li>Live status dot pulses, system is watching</li>
+          <li>Enter the code in the journal to unlock the final entry</li>
+        </ul>
+        <div class="platform-url">icarus7.vercel.app</div>
+      </div>
+    </div>
+
+    <div class="platform-card" style="grid-column: span 2;">
+      <div class="platform-header">
+        <span class="platform-name">AR Experience, Consciousness Transfer</span>
+        <span class="platform-type">SceneryAR / Face Tracking / Final Ending</span>
+      </div>
+      <div class="platform-body">
+        <p>The final beat of the experience. Built in SceneryAR with face tracking, the user is greeted with an innocent-looking loading symbol, then surprised as a glossy futuristic mask locks onto their face. An error message appears and cannot be dismissed: <em>"SYSTEM CONSCIOUSNESS UPLOAD COMPLETE. YOU ARE NO MORE AND HAVE JOINED DAMON IN HIS FATE. ERASURE FROM REALITY IMMINENT."</em> User testing showed the experience successfully scared participants, worked 100% of the time, and landed the intended ending. Text size and copy were sharpened based on feedback.</p>
+        <div style="margin-top:16px;">
+          <span class="badge">Face tracking</span>
+          <span class="badge">Futuristic mask overlay</span>
+          <span class="badge">Undismissable error message</span>
+          <span class="badge">100% success rate in testing</span>
+          <span class="badge">scnry.app/SQ5TS9Jti2b</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AI SECTION -->
+<section id="ai-section">
+  <div class="section-number" data-n="05 //">AI AS COLLABORATOR</div>
+  <h2 class="section-title">AI as a<br><em>team member</em></h2>
+
+  <div class="ai-grid">
+    <div class="ai-card">
+      <span class="ai-icon">⚙️</span>
+      <div class="ai-title">Claude, Journal Development</div>
+      <div class="ai-desc">The entire interactive digital journal was built using Claude through direct natural language prompts, no manual coding from scratch. The team described concept, theme, and functions; Claude generated a fully functional, aesthetically consistent web application. Ongoing troubleshooting and technical iteration throughout the build were also handled via Claude. An attempt to troubleshoot Spline VR through Claude was made but ultimately not carried forward.</div>
+    </div>
+    <div class="ai-card">
+      <span class="ai-icon">🔄</span>
+      <div class="ai-title">Claude, Rapid Iteration</div>
+      <div class="ai-desc">Design changes that would have taken days were completed in hours. After user testing flagged issues, font too small, too much visual noise, navigation confusion, all revisions were applied instantly through follow-up Claude prompts. Lock icons, bolder fonts, stronger glow effects, and reorganized navigation were all iterated this way, compressing what would otherwise be a multi-day redesign cycle.</div>
+    </div>
+    <div class="ai-card">
+      <span class="ai-icon">🧠</span>
+      <div class="ai-title">AI, Narrative Brainstorming</div>
+      <div class="ai-desc">AI was used as a collaborative brainstorming tool throughout to develop, refine, and iterate on the narrative concept, themes, artifact integration logic, and audience experience design. It also assisted in drafting and workshopping written content, journal entries, artifact copy, and project documentation, keeping tone consistent across all platforms.</div>
+    </div>
+    <div class="ai-card">
+      <span class="ai-icon">🎨</span>
+      <div class="ai-title">Gemini + Grok, Visual Assets</div>
+      <div class="ai-desc">Gemini AI was used initially to generate visual assets for the USB stick artifact. The team later switched to Grok, which produced stronger results for tech-themed imagery. This iterative comparison of tools reflects the team's experimental approach, testing multiple AI platforms to find the best fit for specific asset types rather than defaulting to one tool for everything.</div>
+    </div>
+    <div class="ai-card">
+      <span class="ai-icon">🧊</span>
+      <div class="ai-title">Spline AI, 3D Assets</div>
+      <div class="ai-desc">Spline AI was experimented with for creating 3D assets within the VR experience. The team explored its capabilities alongside manually adapted Spline community scenes to build the corrupted AI mind environment. This hands-on comparison informed decisions about where AI generation added value versus where manual adaptation was faster and more controllable.</div>
+    </div>
+    <div class="ai-card">
+      <span class="ai-icon">📋</span>
+      <div class="ai-title">Honest Limitations</div>
+      <div class="ai-desc">Not every AI-assisted attempt succeeded. Claude was used to troubleshoot an aspect of the Spline VR experience, but the brainstormed solution wasn't successfully implemented and was not carried forward. This is documented deliberately, the team's approach to AI treats it as a collaborator with real capabilities and real limits, not a guaranteed fix.</div>
+    </div>
+  </div>
+
+  <div class="terminal" style="margin-top:48px;">
+    <div class="terminal-inner">
+      <div class="terminal-line">$ AI_TOOLS_USED:</div>
+      <div class="terminal-line dim">  [1] Claude (Anthropic), journal build, iteration, content writing, troubleshooting</div>
+      <div class="terminal-line dim">  [2] Gemini AI (Google), USB stick visual generation (initial phase)</div>
+      <div class="terminal-line dim">  [3] Grok, tech-themed image generation (switched from Gemini)</div>
+      <div class="terminal-line dim">  [4] Spline AI, 3D asset experimentation for VR</div>
+      <div class="terminal-line dim">  [5] ChatGPT (OpenAI), brainstorming, spellcheck, rephrasing</div>
+      <div class="terminal-line alert">$ NOTE: not all AI attempts succeeded, Spline troubleshoot via Claude not implemented</div>
+      <div class="terminal-line">$ RESULT: tasks that once took days completed in hours; more time for creative work</div>
+      <div class="terminal-line dim">  [6] Claude (Anthropic), this case study website was also built using Claude</div>
+      <div class="terminal-line dim">      same no-code workflow as the journal: natural language prompts, iterated to final form</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- USABILITY TESTING -->
+<section id="usability">
+  <div class="section-number" data-n="06 //">USABILITY TESTING</div>
+  <h2 class="section-title">What users<br><em>revealed</em></h2>
+
+  <div class="platforms-grid">
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">The Note</span>
+        <span class="platform-type">Physical Entry Point</span>
+      </div>
+      <div class="platform-body">
+        <p>Users reported it was eye-catching and made them wonder who got mad and what the fuss was about. The percentage who wondered about the note was lower than those who actually went into the room, which is standard for passive entry points. The note successfully drove foot traffic to the physical artifact.</p>
+        <ul class="platform-steps">
+          <li>Effective at sparking curiosity and inciting an emotional reaction</li>
+          <li>Drop-off between noticing and acting is expected, not a failure</li>
+          <li>Two physical rabbit holes (note + toolbox) attempted to offset "QR code burnout"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">The Toolbox</span>
+        <span class="platform-type">Physical Artifact</span>
+      </div>
+      <div class="platform-body">
+        <p>Praised as big, red, and very easy to find once in the room. Users expressed light enjoyment at receiving the candy reward, a small but meaningful gesture that made participation feel worthwhile. Drop-off between finding the box and continuing the experience was noted as standard for opt-in interactive work.</p>
+        <ul class="platform-steps">
+          <li>High visibility, the red box was immediately apparent</li>
+          <li>Candy reward created a moment of delight and goodwill</li>
+          <li>Some "QR code burnout" noted across the overall class project display</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Journal Website</span>
+        <span class="platform-type">Digital Hub</span>
+      </div>
+      <div class="platform-body">
+        <p>Users were initially confused by navigation, lock icons were added to clearly signal which chapters were unavailable. Mysterious flavour text worked as intended, acting as a red herring and adding visual intrigue. The glitchy tech design was praised. Users reported strong narrative intrigue about the writing style and how it was integrated into the school's reality.</p>
+        <ul class="platform-steps">
+          <li>Added lock icons to unavailable journal entries → resolved confusion</li>
+          <li>Mysterious flavour text praised as effective atmospheric red herring</li>
+          <li>Design continuity across the full experience was noticed and appreciated</li>
+          <li>Users successfully recalled back to previously locked sections after completion</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">Instagram</span>
+        <span class="platform-type">Social / ARG</span>
+      </div>
+      <div class="platform-body">
+        <p>Users continued to correctly interpret Damon's personality and character arc. They expressed genuine enthusiasm engaging creatively with his account and enjoying his journey. Two rabbit holes, one in the post, one in the comments, ensured the transition to the VR experience was clear regardless of which path a user discovered.</p>
+        <ul class="platform-steps">
+          <li>Character arc landing correctly, users perceived Damon's descent accurately</li>
+          <li>Audience enthusiasm confirmed the social platform was effective narrative territory</li>
+          <li>Dual rabbit holes (post + comments) prevent dead ends in the experience flow</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">VR Experience</span>
+        <span class="platform-type">Spline / Immersive</span>
+      </div>
+      <div class="platform-body">
+        <p>Users felt controlled, described the sensation as feeling "like a puppet," which was the intended effect. Camera movement was flagged as too fast and caused dizziness. The floating hands did not feel threatening enough to users. Critically: users did not realize the scrambled images were an interactive puzzle, they appeared to look fixed.</p>
+        <ul class="platform-steps">
+          <li>✓ Felt like a puppet, loss-of-control sensation worked</li>
+          <li>✗ Camera speed too fast, caused dizziness, especially near the second hand</li>
+          <li>✗ Floating hands not threatening, visual redesign needed</li>
+          <li>✗ Puzzle interactivity unclear, scrambled images looked static, not rearrangeable</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="platform-name">AR Experience</span>
+        <span class="platform-type">SceneryAR / Face Tracking</span>
+      </div>
+      <div class="platform-body">
+        <p>Users reported the experience was scary and they felt something was wrong, exactly the intended emotional response. Face tracking produced mixed reactions: some users were amused, others unsettled ("I don't like looking at him"). The experience worked 100% of the time in testing. Text size and copy were updated for readability and impact after feedback.</p>
+        <ul class="platform-steps">
+          <li>✓ Successfully scared, error message communicated the right feeling</li>
+          <li>✓ 100% success rate, "ensure face is visible" instructions were effective</li>
+          <li>Text size increased for readability after user feedback</li>
+          <li>Copy rewritten to be scarier, colours and tone adjusted accordingly</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section id="style">
+  <div class="section-number" data-n="07 //">VISUAL IDENTITY</div>
+  <h2 class="section-title">The <em>aesthetic</em><br>language</h2>
+
+  <div class="style-row">
+    <div class="style-label">Colours</div>
+    <div class="color-swatches">
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#0d1410;border:1px solid rgba(255,255,255,0.1);"></div>
+        <span>#0D1410</span>
+      </div>
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#00ff88;"></div>
+        <span>#00FF88</span>
+      </div>
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#1a2b1f;"></div>
+        <span>#1A2B1F</span>
+      </div>
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#b0c4b8;"></div>
+        <span>#B0C4B8</span>
+      </div>
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#4a5e52;"></div>
+        <span>#4A5E52</span>
+      </div>
+      <div class="swatch">
+        <div style="width:64px;height:64px;background:#ff3355;"></div>
+        <span>#FF3355</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="style-row">
+    <div class="style-label">Typefaces</div>
+    <div class="font-display">
+      <div class="font-sample">
+        <span class="f-name">JERSEY 15, HEADLINES</span>
+        <span class="f-text" style="font-family:'Space Mono',monospace;font-size:28px;color:var(--green);">THE MEMORY PROJECT</span>
+      </div>
+      <div class="font-sample">
+        <span class="f-name">IBM PLEX SANS, BODY</span>
+        <span class="f-text" style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--white);max-width:280px;line-height:1.6;">Enzo discovers the digital remains of Damon's experiment…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="style-row">
+    <div class="style-label">Aesthetic</div>
+    <div>
+      <p style="font-size:13px;color:rgba(232,240,235,0.65);line-height:1.8;max-width:640px;">
+        Retro-futuristic terminal meets corrupted digital horror. Inspired by indie games like SIGNALIS, brutalist web interfaces, vintage console UI, and glitch art. The visual world communicates two registers simultaneously: the cold, organized ambition of scientific progress, and the creeping decay of a system consuming itself.
+      </p>
+      <div style="margin-top:24px;">
+        <span class="badge">Scanlines</span>
+        <span class="badge">Neon Glow</span>
+        <span class="badge">Glitch Effects</span>
+        <span class="badge">Terminal Aesthetic</span>
+        <span class="badge">Green + Red Contrast</span>
+        <span class="badge">Retro-Futuristic</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="section-number" data-n="08 //">THE TEAM</div>
+  <h2 class="section-title">NM <em>Academy</em></h2>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-card-top"></div>
+      <div class="team-card-body">
+        <div class="team-initials">M</div>
+        <div class="team-name">Marion X.</div>
+        <div class="team-role">Visual Design & AR Lead</div>
+        <ul class="team-contributions">
+          <li>Hero image and overall visual direction</li>
+          <li>Style tile and mood board development</li>
+          <li>Storyboarding and art direction exercises</li>
+          <li>AR artifact development in Scenery</li>
+          <li>Prototype graphics in Procreate</li>
+          <li>Presentation creation and document editing</li>
+          <li>XD exercises: Style Tile, Art Direction, Storyboarding</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-card-top"></div>
+      <div class="team-card-body">
+        <div class="team-initials">R</div>
+        <div class="team-name">Rabia A.</div>
+        <div class="team-role">Project Manager & Narrative Lead</div>
+        <ul class="team-contributions">
+          <li>Narrative concept and project statement</li>
+          <li>Character design and story arc development</li>
+          <li>Proposal platforms documentation</li>
+          <li>RACI chart, risk assessment, Gantt chart</li>
+          <li>Digital journal website development (with Claude AI)</li>
+          <li>AI impact documentation and process management</li>
+          <li>XD exercises: Research Project, Structure</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-card-top"></div>
+      <div class="team-card-body">
+        <div class="team-initials">A</div>
+        <div class="team-name">Alejandra G.</div>
+        <div class="team-role">Immersive Media Lead</div>
+        <ul class="team-contributions">
+          <li>VR experience development in Spline</li>
+          <li>Corrupted AI mind scene and ESC button mechanic</li>
+          <li>Physical artifact concept (toolbox, candy, QR codes)</li>
+          <li>Audience discovery and integration strategy</li>
+          <li>Instagram account development and audience seeding</li>
+          <li>Brainstorming facilitation</li>
+          <li>XD exercises: Art Direction, Secret Sauce</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REFLECTION -->
+<section id="reflection">
+  <div class="section-number" data-n="09 //">PROCESS & REFLECTION</div>
+  <h2 class="section-title">What we <em>learned</em></h2>
+
+  <div class="reflection-grid">
+    <div class="reflection-col">
+      <h3>Project <em>Management</em></h3>
+      <p>The project was divided across three defined roles, Visual Design, Project Manager & Narrative, and Immersive Media Lead, ensuring clear ownership over every task. A Gantt chart tracked deliverables across the full timeline, mapping tasks to team members and deadlines from proposal through final delivery.</p>
+      <p>The narrative concept was locked early, with character arcs for both Damon and Enzo solidified before development began. Physical, digital, and immersive artifacts were developed in parallel, designed from the start to connect into one cohesive player journey.</p>
+      <p>Feedback loops were built into the process, usability testing findings directly drove design and copy revisions (lock icons, text size, AR copywriting) before final delivery.</p>
+    </div>
+
+    <div class="reflection-col">
+      <h3>User <em>Testing Outcomes</em></h3>
+      <p>Testing across all major components revealed a consistent pattern: the emotional and atmospheric goals were landing, but some interactive mechanics needed clearer affordances. The VR puzzle was the most critical failure point, users didn't realize the scrambled images could be rearranged, treating an interactive element as decoration.</p>
+      <p>The AR experience was the strongest performer, 100% success rate, genuinely scared users, and produced the intended unsettling emotional response. The Instagram arc was also validated: users accurately interpreted Damon's personality and character descent without any explicit guidance.</p>
+      <p>The journal's mysterious flavour text and glitchy aesthetic received consistent praise, confirming the visual and tonal direction was correct.</p>
+    </div>
+
+    <div class="reflection-col">
+      <h3>What <em>Worked</em></h3>
+      <p>The physical entry points, the angry note and the toolbox, created genuine moments of surprise and delight that set the right tone. The candy reward was small but meaningful. The dual rabbit holes on Instagram (post and comments) ensured no user hit a dead end transitioning to the VR.</p>
+      <p>AI-assisted development compressed timelines substantially. The journal went from concept to deployed live web app without anyone writing code from scratch, freeing the team's time for narrative and immersive work. Rapid iteration loops via Claude made post-testing design changes fast and low-effort.</p>
+      <p>The USB stick as a physical-to-digital bridge was a distinctive choice that reinforced the world, something you find at a real desk in a real classroom, connecting to a website that feels like it belongs to the same world.</p>
+    </div>
+
+    <div class="reflection-col">
+      <h3>What to <em>Improve</em></h3>
+      <p>The VR experience needs clearer puzzle affordances, users must understand the scrambled images are interactive before they give up. Camera speed caused dizziness and should be slowed. The floating hands need stronger visual menace to read as threatening rather than decorative.</p>
+      <p>QR code fatigue was noted across the class showcase environment. Future iterations might explore non-QR entry mechanisms to differentiate the experience from other projects in the same space.</p>
+      <p>AI tools were treated honestly, not every attempt worked. Claude's Spline troubleshooting attempt wasn't implemented. This is documented as a real outcome, not hidden. Understanding AI's limitations alongside its capabilities is part of what makes the collaboration meaningful.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LIVE PLATFORMS -->
+<section id="live-platforms" style="background:var(--dark);border-top:1px solid rgba(0,255,136,0.08);border-bottom:1px solid rgba(0,255,136,0.08);">
+  <div class="section-number" data-n="// //">LIVE PLATFORMS</div>
+  <h2 class="section-title" style="margin-bottom:40px;">Experience it<br><em>yourself</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;">
+
+    <a href="https://damons-end-journal.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px 36px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.4)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">01 / Digital Journal</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--white);margin-bottom:12px;">Damon's <span style="font-style:italic;color:var(--green);">Journal</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;margin-bottom:20px;">The primary narrative hub. Six entries unlocking progressively, glitch effects, CRT aesthetic, and the final code puzzle.</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);opacity:0.8;border-top:1px solid rgba(0,255,136,0.1);padding-top:16px;">damons-end-journal.vercel.app ↗</div>
+      </div>
+    </a>
+
+    <a href="https://icarus7.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px 36px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.4)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">02 / Access Code</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--white);margin-bottom:12px;"><span style="font-style:italic;color:var(--green);">ICARUS7</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;margin-bottom:20px;">The access code website. Chromatic glitch on hover, animated scanlines, pulsing status dot. Enter the code in the journal to unlock the final chapter.</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);opacity:0.8;border-top:1px solid rgba(0,255,136,0.1);padding-top:16px;">icarus7.vercel.app ↗</div>
+      </div>
+    </a>
+
+    <a href="https://app.spline.design/community/file/15eba527-5108-4421-ab40-9eef91fdbfdf" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px 36px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.4)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">03 / VR Experience</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--white);margin-bottom:12px;">Corrupted <span style="font-style:italic;color:var(--green);">System</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;margin-bottom:20px;">Enter the AI's corrupted mind. Grasping hands, scrambled puzzle, green and red contrast. Solve the puzzle to find the USB location.</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);opacity:0.8;border-top:1px solid rgba(0,255,136,0.1);padding-top:16px;">app.spline.design ↗</div>
+      </div>
+    </a>
+
+    <a href="https://scnry.app/SQ5TS9Jti2b" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px 36px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.4)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;">04 / AR Experience</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--white);margin-bottom:12px;">Consciousness <span style="font-style:italic;color:var(--green);">Transfer</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;margin-bottom:20px;">The final ending. Face tracking locks a mask over you. An undismissable error message tells you what you have become. There is nothing you can do.</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);opacity:0.8;border-top:1px solid rgba(0,255,136,0.1);padding-top:16px;">scnry.app/SQ5TS9Jti2b ↗</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- PROCESS PAGES NAV -->
+<section style="background:var(--dark);border-top:1px solid rgba(0,255,136,0.08);padding:60px 80px;">
+  <div class="section-number" data-n="09 //">PROCESS DOCUMENTATION</div>
+  <h2 class="section-title" style="margin-bottom:32px;">Dive into each<br><em>project phase</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;">
+    <a href="project-01-process.html" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px;transition:border-color 0.3s;display:block;" onmouseover="this.style.borderColor='rgba(0,255,136,0.35)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;margin-bottom:12px;">PROJECT 01</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;">Developing the <span style="font-style:italic;color:var(--green);">Narrative</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;">Source myth research · 8 myths evaluated · Icarus selected · Project statement · Character design · XD exercises · Platform mapping · Style tile</div>
+        <div style="margin-top:20px;font-size:10px;letter-spacing:2px;color:var(--green);">View process →</div>
+      </div>
+    </a>
+    <a href="project-02-process.html" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.35)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;margin-bottom:12px;">PROJECT 02</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;">Mapping the <span style="font-style:italic;color:var(--green);">Experience</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;">Claude-built journal · Instagram launch · AR platform research · VR Spline prototypes · Physical toolbox · First user testing · AI workflow</div>
+        <div style="margin-top:20px;font-size:10px;letter-spacing:2px;color:var(--green);">View process →</div>
+      </div>
+    </a>
+    <a href="project-03-process.html" style="text-decoration:none;">
+      <div style="background:var(--black);border:1px solid rgba(0,255,136,0.1);padding:32px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(0,255,136,0.35)'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--grey);letter-spacing:3px;margin-bottom:12px;">PROJECT 03</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:28px;color:var(--white);margin-bottom:10px;">Cognitive <span style="font-style:italic;color:var(--green);">Walkthrough</span></div>
+        <div style="font-size:11px;color:rgba(232,240,235,0.5);line-height:1.7;">7 artifacts complete · USB stick · ICARUS7 site · AR face tracking mask · Full usability testing · Expanded AI toolkit · Finalized arcs</div>
+        <div style="margin-top:20px;font-size:10px;letter-spacing:2px;color:var(--green);">View process →</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">The Memory Project</div>
+  <div class="footer-right">
+    NM Academy, Marion X, Alejandra G, Rabia A<br>
+    VDES 34444, Interactive Narrative<br>
+    Sheridan College · 2026
+  </div>
+</footer>
+
+</body>
+</html>
